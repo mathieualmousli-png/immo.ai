@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copilote CHR — Matching immobilier Paris</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --noir: #0f0f0f;
+  --blanc: #fafaf8;
+  --gris-bg: #f2f0eb;
+  --gris-border: #e0ddd6;
+  --gris-texte: #6b6860;
+  --or: #c9a84c;
+  --or-clair: #f5edda;
+  --vert: #2d6a4f;
+  --vert-clair: #e8f4ee;
+  --ambre: #8a6520;
+  --ambre-clair: #faeeda;
+  --rouge: #9b2335;
+  --rouge-clair: #f9ece8;
+  --r: 6px;
+  --rlg: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--blanc); color: var(--noir); font-size: 15px; line-height: 1.6; }
+
+nav { display: flex; align-items: center; padding: 0 1.5rem; height: 54px; border-bottom: 1px solid var(--gris-border); background: var(--blanc); position: sticky; top: 0; z-index: 100; }
+.logo { font-family: 'DM Serif Display', serif; font-size: 17px; }
+.logo span { color: var(--or); }
+.mvp-tag { margin-left: 8px; font-size: 10px; font-weight: 500; background: var(--noir); color: var(--blanc); padding: 2px 7px; border-radius: 20px; letter-spacing: 0.08em; }
+.nav-tabs { margin-left: auto; display: flex; gap: 4px; }
+.ntab { font-size: 13px; padding: 5px 13px; border-radius: 20px; cursor: pointer; color: var(--gris-texte); border: none; background: none; font-family: inherit; transition: all 0.12s; }
+.ntab:hover { color: var(--noir); background: var(--gris-bg); }
+.ntab.on { background: var(--noir); color: var(--blanc); }
+
+.page { display: none; max-width: 860px; margin: 0 auto; padding: 1.5rem; }
+.page.on { display: block; }
+
+.hero { padding: 2.5rem 0 1.5rem; text-align: center; }
+.hero h1 { font-family: 'DM Serif Display', serif; font-size: 34px; line-height: 1.15; letter-spacing: -0.02em; }
+.hero h1 em { color: var(--or); font-style: italic; }
+.hero p { font-size: 13px; color: var(--gris-texte); margin-top: 6px; }
+
+.api-notice { background: var(--or-clair); border: 1px solid #e0c870; border-radius: var(--r); padding: 10px 14px; margin-bottom: 1rem; font-size: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.api-notice input { flex: 1; min-width: 180px; border: 1px solid var(--gris-border); border-radius: var(--r); padding: 5px 9px; font-size: 12px; font-family: inherit; }
+.api-notice button { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--gris-border); background: var(--blanc); cursor: pointer; font-family: inherit; }
+
+.searchbox { border: 1px solid var(--gris-border); border-radius: var(--rlg); padding: 1rem 1.25rem; background: var(--blanc); transition: border-color 0.15s; }
+.searchbox:focus-within { border-color: var(--noir); }
+.searchbox textarea { width: 100%; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--noir); background: transparent; resize: none; min-height: 75px; }
+.searchbox textarea::placeholder { color: var(--gris-texte); }
+.search-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--gris-bg); }
+.search-hint { font-size: 12px; color: var(--gris-texte); }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer; border: none; transition: all 0.12s; }
+.btn-dark { background: var(--noir); color: var(--blanc); }
+.btn-dark:hover { opacity: 0.82; }
+.btn-dark:disabled { opacity: 0.38; cursor: not-allowed; }
+
+.pills-label { font-size: 11px; color: var(--gris-texte); text-transform: uppercase; letter-spacing: 0.08em; margin: 1.2rem 0 8px; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill-btn { font-size: 12px; padding: 5px 13px; border-radius: 20px; border: 1px solid var(--gris-border); cursor: pointer; background: var(--blanc); color: var(--gris-texte); transition: all 0.12s; }
+.pill-btn:hover { border-color: var(--noir); color: var(--noir); }
+.pill-btn.on { background: var(--noir); color: var(--blanc); border-color: var(--noir); }
+
+.loader { display: none; align-items: center; gap: 10px; padding: 1rem 0; color: var(--gris-texte); font-size: 13px; }
+.loader.on { display: flex; }
+.spin { width: 15px; height: 15px; border: 2px solid var(--gris-border); border-top-color: var(--noir); border-radius: 50%; animation: spin 0.65s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.crit-box { background: var(--gris-bg); border-radius: var(--rlg); padding: 1rem 1.25rem; margin: 1rem 0; }
+.crit-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.crit-lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris-texte); }
+.ai-tag { font-size: 10px; background: var(--or); color: var(--blanc); padding: 2px 7px; border-radius: 20px; }
+.crit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 7px; }
+.crit-item { background: var(--blanc); border-radius: var(--r); padding: 7px 10px; }
+.crit-k { font-size: 10px; color: var(--gris-texte); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.crit-v { font-size: 12px; font-weight: 500; }
+.ptag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 20px; }
+.p-green { background: var(--vert-clair); color: var(--vert); }
+.p-gray { background: var(--gris-bg); color: var(--gris-texte); }
+
+.sec-bar { display: flex; align-items: baseline; justify-content: space-between; margin: 1.75rem 0 1rem; padding-bottom: 8px; border-bottom: 1px solid var(--gris-border); }
+.sec-title { font-family: 'DM Serif Display', serif; font-size: 20px; }
+.sec-count { font-size: 12px; color: var(--gris-texte); }
+
+.results { display: flex; flex-direction: column; gap: 9px; }
+.rcard { border: 1px solid var(--gris-border); border-radius: var(--rlg); padding: 1.1rem 1.25rem; cursor: pointer; transition: all 0.12s; background: var(--blanc); }
+.rcard:hover { border-color: #999; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.rcard.best { border-color: var(--or); }
+.rcard-head { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 8px; }
+.score-ring { min-width: 50px; height: 50px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.sr-high { background: var(--vert-clair); }
+.sr-mid { background: var(--ambre-clair); }
+.sr-low { background: var(--rouge-clair); }
+.score-n { font-size: 17px; font-weight: 500; line-height: 1; }
+.sn-high { color: var(--vert); }
+.sn-mid { color: var(--ambre); }
+.sn-low { color: var(--rouge); }
+.score-s { font-size: 9px; color: var(--gris-texte); text-transform: uppercase; letter-spacing: 0.04em; }
+.rcard-info { flex: 1; }
+.rname { font-size: 14px; font-weight: 500; }
+.rmeta { font-size: 12px; color: var(--gris-texte); margin-top: 2px; }
+.best-crown { font-size: 10px; background: var(--or); color: var(--blanc); padding: 2px 7px; border-radius: 20px; margin-left: 7px; }
+.bar-bg { height: 3px; background: var(--gris-border); border-radius: 3px; overflow: hidden; margin: 6px 0; }
+.bar-fill { height: 3px; border-radius: 3px; }
+.bf-green { background: var(--vert); }
+.bf-mid { background: var(--or); }
+.bf-low { background: var(--rouge); }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; }
+.tg { background: var(--vert-clair); color: var(--vert); }
+.ta { background: var(--ambre-clair); color: var(--ambre); }
+.tr { background: var(--rouge-clair); color: var(--rouge); }
+.tn { background: var(--gris-bg); color: var(--gris-texte); }
+.rdesc { font-size: 12px; color: var(--gris-texte); border-top: 1px solid var(--gris-bg); padding-top: 7px; margin-top: 7px; line-height: 1.5; }
+
+.back { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--gris-texte); cursor: pointer; margin-bottom: 1.5rem; transition: color 0.12s; border: none; background: none; font-family: inherit; }
+.back:hover { color: var(--noir); }
+.det-name { font-family: 'DM Serif Display', serif; font-size: 26px; margin-bottom: 4px; }
+.det-meta { font-size: 13px; color: var(--gris-texte); margin-bottom: 1rem; }
+.score-disp { display: inline-flex; align-items: center; gap: 10px; background: var(--gris-bg); padding: 9px 16px; border-radius: var(--r); margin-bottom: 1.25rem; }
+.score-big { font-family: 'DM Serif Display', serif; font-size: 30px; }
+.sb-high { color: var(--vert); }
+.sb-mid { color: var(--ambre); }
+.sb-low { color: var(--rouge); }
+.det-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (max-width: 580px) { .det-grid { grid-template-columns: 1fr; } }
+.det-block { background: var(--gris-bg); border-radius: var(--rlg); padding: 1rem 1.2rem; }
+.det-btitle { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris-texte); margin-bottom: 9px; padding-bottom: 6px; border-bottom: 1px solid var(--gris-border); }
+.drow { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+.dk { color: var(--gris-texte); }
+.dv { font-weight: 500; }
+.arg { border-left: 3px solid var(--vert); background: var(--vert-clair); padding: 9px 13px; border-radius: 0 var(--r) var(--r) 0; margin-bottom: 7px; font-size: 13px; color: #1a4a35; line-height: 1.5; }
+.warn { border-left: 3px solid var(--or); background: var(--ambre-clair); padding: 9px 13px; border-radius: 0 var(--r) var(--r) 0; margin-bottom: 7px; font-size: 13px; color: var(--ambre); line-height: 1.5; }
+.sub-title { font-size: 14px; font-weight: 500; margin: 1.25rem 0 7px; }
+.concept-box { background: var(--gris-bg); border-radius: var(--r); padding: 10px 14px; font-size: 13px; color: var(--gris-texte); }
+
+.lrow { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid var(--gris-border); border-radius: var(--r); background: var(--blanc); transition: border-color 0.12s; }
+.lrow:hover { border-color: #999; }
+.lid { font-size: 11px; color: var(--gris-texte); min-width: 36px; }
+.lname { flex: 1; font-size: 13px; font-weight: 500; }
+.larr { font-size: 12px; color: var(--gris-texte); min-width: 62px; }
+.lsurf { font-size: 12px; color: var(--gris-texte); min-width: 48px; }
+.lloyer { font-size: 13px; font-weight: 500; min-width: 62px; }
+.ltags { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.empty { text-align: center; padding: 3rem 1rem; }
+.empty-h { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--gris-texte); margin-bottom: 6px; }
+.empty-p { font-size: 13px; color: var(--gris-texte); }
+
+.toast { position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%); background: var(--noir); color: var(--blanc); padding: 9px 18px; border-radius: 20px; font-size: 13px; display: none; z-index: 999; white-space: nowrap; }
+.toast.on { display: block; }
+
+.listings-stack { display: flex; flex-direction: column; gap: 7px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">Copilote<span>·</span>CHR</span>
+  <span class="mvp-tag">MVP</span>
+  <div class="nav-tabs">
+    <button class="ntab on" onclick="goPage('match',this)">Matching</button>
+    <button class="ntab" onclick="goPage('annonces',this)">Annonces (50)</button>
+  </div>
+</nav>
+
+<!-- PAGE MATCHING -->
+<div class="page on" id="page-match">
+  <div id="view-main">
+    <div class="hero">
+      <h1>Trouvez le bon fonds<br>en <em>2 minutes</em></h1>
+      <p>Décrivez librement le besoin — l'IA extrait les critères et matche sur 50 annonces Paris</p>
+    </div>
+
+    <div class="api-notice" id="api-notice">
+      <span style="color:var(--ambre); font-weight:500;">🔑 Clé API Anthropic</span>
+      <span style="color:var(--ambre);">pour l'extraction IA :</span>
+      <input type="password" id="apikey" placeholder="sk-ant-api03-..." />
+      <button onclick="saveApiKey()">Enregistrer</button>
+      <span style="color:var(--ambre); font-size:11px;">Stockée localement · jamais transmise</span>
+    </div>
+
+    <div class="searchbox">
+      <textarea id="sinput" placeholder="Ex : Je cherche un restaurant avec terrasse obligatoire à Paris centre, extraction indispensable, entre 110 et 160 m², loyer max 80 000 €/an, quartier mix bureaux et tourisme, fort flux midi et soir…" rows="4"></textarea>
+      <div class="search-foot">
+        <span class="search-hint" id="shint">Cmd+Enter pour lancer · ou choisissez un profil ci-dessous</span>
+        <button class="btn btn-dark" id="btngo" onclick="doSearch()">Analyser &amp; matcher →</button>
+      </div>
+    </div>
+
+    <div class="loader" id="loader"><div class="spin"></div><span id="ltxt">Extraction en cours…</span></div>
+
+    <div class="pills-label">Profils types rapides</div>
+    <div class="pills" id="ppills"></div>
+
+    <div id="crit-out"></div>
+    <div id="res-out"></div>
+  </div>
+
+  <div id="view-detail" style="display:none">
+    <button class="back" onclick="backToResults()">← Retour aux résultats</button>
+    <div id="det-content"></div>
+  </div>
+</div>
+
+<!-- PAGE ANNONCES -->
+<div class="page" id="page-annonces">
+  <div class="sec-bar">
+    <div class="sec-title">Toutes les annonces</div>
+    <div class="sec-count">50 fonds de commerce · Paris</div>
+  </div>
+  <div class="listings-stack" id="all-list"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SK = 'chr_ak';
+let apiKey = localStorage.getItem(SK) || '';
+if (apiKey) { document.getElementById('apikey').value = apiKey; document.getElementById('api-notice').style.display = 'none'; }
+
+function saveApiKey() {
+  const v = document.getElementById('apikey').value.trim();
+  if (!v) return;
+  localStorage.setItem(SK, v); apiKey = v;
+  document.getElementById('api-notice').style.display = 'none';
+  toast('Clé API enregistrée ✓');
+}
+
+const BUYERS = [
+  { id:'B01', name:'Restaurant premium casual', txt:'Restaurant premium casual à Paris centre, terrasse obligatoire, extraction obligatoire, 110 à 160 m², loyer max 75 000 €/an, mix bureaux tourisme, au moins 50 couverts.' },
+  { id:'B02', name:'Primo-accédant street food', txt:'Premier local concept simple street food, budget cession max 180 000 €, loyer max 38 000 €/an, 40 à 90 m², quartier jeune vivant, extraction souhaitée.' },
+  { id:'B03', name:'Brasserie gros volume', txt:'Grande brasserie terrasse min 30 places obligatoire, extraction obligatoire, 140 à 250 m², angle ou grande façade, loyer max 110 000 €/an, bureaux et résidentiel.' },
+  { id:'B04', name:'Groupe multi-sites', txt:'Groupe cherche grand emplacement très visible 180 à 350 m², extraction, loyer max 160 000 €/an, zone prime ou semi-prime Paris.' },
+  { id:'B05', name:'Cave à manger / bar à vin', txt:'Cave à manger avec licence IV, flux soir prioritaire, 60 à 140 m², loyer max 55 000 €/an, quartier destination CSP+, extraction non obligatoire.' },
+  { id:'B06', name:'Coffee shop premium', txt:'Coffee shop fort flux matin et journée, bureaux et tourisme, 40 à 120 m², loyer max 50 000 €/an, belle vitrine, extraction non requise.' },
+  { id:'B07', name:'Bar festif licence IV', txt:'Bar orienté soir avec licence IV obligatoire, 70 à 180 m², loyer max 70 000 €/an, quartier nocturne vivant.' },
+  { id:'B08', name:'Boulangerie snacking', txt:'Boulangerie snacking fort flux matin midi, extraction, angle ou grande façade, 90 à 180 m², loyer max 90 000 €/an, résidentiel et bureaux.' },
+  { id:'B09', name:'Traiteur / labo production', txt:'Cuisine production livraison, extraction obligatoire, 80 à 200 m², loyer max 45 000 €/an, zone fonctionnelle périphérique Paris, pas de vitrine requise.' },
+  { id:'B10', name:'Gastronomique rive gauche', txt:'Restaurant gastronomique rive gauche Paris 5e 6e 7e, adresse identitaire, extraction, 100 à 220 m², loyer max 95 000 €/an, clientèle aisée tourisme qualitatif.' },
+];
+
+const L = [
+  { id:'L001', t:'Restaurant terrasse Montorgueil', a:2, q:'Montorgueil', sr:115, st:140, ex:true, l4:false, te:24, ip:48, fa:7.2, ag:true, lo:72000, pr:540000, et:'bon', en:'Bureaux, tourisme, rue très active', de:'Extraction existante, salle rectangulaire, cave saine. Emplacement d\'angle à fort flux mixte midi et soir. Idéal pour un concept brasserie ou bistrot premium.', co:'Brasserie moderne, bistrot premium, cuisine du marché' },
+  { id:'L002', t:'Bistro Saint-Germain-des-Prés', a:6, q:'Saint-Germain', sr:105, st:130, ex:true, l4:false, te:12, ip:42, fa:6.4, ag:false, lo:88000, pr:690000, et:'très bon', en:'CSP+, tourisme qualitatif, soirée active', de:'Emplacement élégant dans une des rues les plus recherchées du 6e. Clientèle de destination, fort potentiel de ticket moyen élevé. Local livré en parfait état.', co:'Gastronomique accessible, bistronomie, cave à manger' },
+  { id:'L003', t:'Local street food République', a:10, q:'République', sr:58, st:74, ex:true, l4:false, te:0, ip:22, fa:4.8, ag:false, lo:34000, pr:145000, et:'correct', en:'Jeune, flux dense, bureaux, résidentiel', de:'Petit local efficace avec extraction légère. Parfait pour une première affaire ou un concept compact. Flux piéton dense toute la journée.', co:'Street food, restauration rapide, comptoir' },
+  { id:'L004', t:'Brasserie angle Batignolles', a:17, q:'Batignolles', sr:160, st:210, ex:true, l4:false, te:32, ip:70, fa:10.5, ag:true, lo:108000, pr:860000, et:'bon', en:'Résidentiel aisé, bureaux, quartier vivant', de:'Très belle façade d\'angle, gros volume, terrasse installée. Quartier en forte montée en gamme. Configuration idéale pour une grande brasserie.', co:'Grande brasserie, café-restaurant, bistrot premium' },
+  { id:'L005', t:'Cave à manger Marais', a:4, q:'Marais', sr:82, st:96, ex:false, l4:true, te:10, ip:30, fa:5.5, ag:false, lo:52000, pr:290000, et:'très bon', en:'Tourisme, destination, flux soir', de:'Local de charme avec pierre apparente et cave voûtée. Licence IV en place. Idéal pour cave à manger ou bar à vins nature.', co:'Cave à manger, bar à vins, tapas premium' },
+  { id:'L006', t:'Coffee shop Opéra', a:9, q:'Opéra', sr:52, st:68, ex:false, l4:false, te:8, ip:24, fa:6.8, ag:true, lo:47000, pr:230000, et:'très bon', en:'Bureaux, tourisme, shopping', de:'Très fort flux journée. Vitrine large d\'angle. Clientèle bureaux et touristes abondante. Idéal pour un café premium ou brunch léger.', co:'Coffee shop, brunch, salon de thé' },
+  { id:'L007', t:'Restaurant premium Madeleine', a:8, q:'Madeleine', sr:128, st:165, ex:true, l4:false, te:18, ip:54, fa:7.9, ag:false, lo:94000, pr:780000, et:'très bon', en:'Bureaux, luxe, tourisme', de:'Emplacement qualitatif dans l\'un des quartiers les plus huppés de Paris. Extraction conforme. Fort potentiel déjeuner affaires.', co:'Restaurant d\'affaires, gastronomique, brasserie premium' },
+  { id:'L008', t:'Bar licence IV Oberkampf', a:11, q:'Oberkampf', sr:95, st:120, ex:false, l4:true, te:14, ip:38, fa:5.9, ag:false, lo:61000, pr:420000, et:'bon', en:'Quartier de nuit, destination soir', de:'Exploitation bar évidente dans le quartier le plus vivant de Paris le soir. Licence IV en place. Fort potentiel cocktails et tapas.', co:'Bar à cocktails, tapas-bar, bar festif' },
+  { id:'L009', t:'Boulangerie-snacking Nation', a:12, q:'Nation', sr:118, st:170, ex:true, l4:false, te:0, ip:28, fa:8.4, ag:true, lo:79000, pr:580000, et:'correct', en:'Résidentiel dense, flux de transport', de:'Angle très passant avec forte visibilité sur axe résidentiel majeur. Fournil à adapter. Potentiel exceptionnel pour boulangerie-snacking de flux.', co:'Boulangerie artisanale, boulangerie-snacking, franchise' },
+  { id:'L010', t:'Restaurant terrasse Ternes', a:17, q:'Ternes', sr:122, st:150, ex:true, l4:false, te:26, ip:50, fa:7.1, ag:false, lo:76000, pr:560000, et:'bon', en:'CSP+, bureaux, destination locale', de:'Configuration cohérente avec terrasse exploitable sur rue piétonne. Quartier CSP+ avec fort lunch d\'affaires. Loyer en haut de fourchette à négocier.', co:'Bistrot premium, cuisine française moderne, brasserie' },
+  { id:'L011', t:'Grande brasserie Victor Hugo', a:16, q:'Victor Hugo', sr:190, st:255, ex:true, l4:true, te:36, ip:88, fa:11.2, ag:true, lo:138000, pr:1250000, et:'bon', en:'CSP+, résidentiel aisé, destination', de:'Format rare : très grande capacité, licence IV, angle majeur. Quartier résidentiel aisé en forte demande. Remise au goût du jour nécessaire.', co:'Grande brasserie, café-restaurant haut de gamme' },
+  { id:'L012', t:'Petit restaurant Sentier', a:2, q:'Sentier', sr:72, st:90, ex:true, l4:false, te:6, ip:28, fa:5.1, ag:false, lo:49000, pr:260000, et:'bon', en:'Bureaux, digital, midi fort', de:'Format compact et efficace avec extraction. Quartier Sentier très actif le midi. Idéal pour concept lunch efficace ou première adresse.', co:'Cantine urbaine, lunch bar, cuisine rapide qualitative' },
+  { id:'L013', t:'Local charmant Canal Saint-Martin', a:10, q:'Canal Saint-Martin', sr:64, st:80, ex:false, l4:false, te:10, ip:26, fa:5.7, ag:false, lo:43000, pr:210000, et:'très bon', en:'Jeune, destination, promenade, week-end', de:'Très charmant avec terrasse sur le canal. Sans extraction, usage limité à restauration froide ou snacking. Fort flux week-end.', co:'Café, snacking froid, glacier, épicerie fine' },
+  { id:'L014', t:'Restaurant angle Saint-Honoré', a:1, q:'Saint-Honoré', sr:132, st:170, ex:true, l4:false, te:20, ip:52, fa:8.8, ag:true, lo:118000, pr:980000, et:'très bon', en:'Luxe, tourisme, bureaux', de:'Emplacement premium absolu dans le 1er. Très belle lisibilité commerciale d\'angle. Local livré en parfait état. Clientèle internationale et affaires.', co:'Gastronomique, brasserie de luxe, concept signature' },
+  { id:'L015', t:'Bar à tapas Pigalle', a:9, q:'Pigalle', sr:88, st:110, ex:true, l4:true, te:12, ip:34, fa:5.3, ag:false, lo:65000, pr:470000, et:'bon', en:'Soirée, tourisme, destination', de:'Bonne intensité soir dans quartier en pleine gentrification. Licence IV et extraction présentes. Concept tapas-cocktails cohérent.', co:'Bar à tapas, cocktails bar, restaurant soir' },
+  { id:'L016', t:'Labo production Porte de Vanves', a:14, q:'Porte de Vanves', sr:140, st:185, ex:true, l4:false, te:0, ip:0, fa:4.2, ag:false, lo:39000, pr:160000, et:'correct', en:'Logistique, zone fonctionnelle', de:'Outil de production avant tout. Très bien adapté à la livraison et au traiteur. Accès utilitaire facile. Peu de valeur vitrine.', co:'Dark kitchen, traiteur, cuisine centrale, labo' },
+  { id:'L017', t:'Restaurant place des Vosges', a:4, q:'Vosges / Bastille', sr:112, st:145, ex:true, l4:false, te:16, ip:44, fa:6.9, ag:false, lo:79000, pr:610000, et:'bon', en:'Tourisme, résidents aisés, destination', de:'Quartier très recherché avec clientèle internationale. Belle terrasse en vis-à-vis des arcades. Équilibre midi-soir naturel.', co:'Restaurant de destination, bistronomie, cuisine du monde premium' },
+  { id:'L018', t:'Coffee shop rue Cler', a:7, q:'Rue Cler', sr:48, st:61, ex:false, l4:false, te:10, ip:20, fa:6.1, ag:false, lo:51000, pr:260000, et:'très bon', en:'Tourisme, résidents premium, journée', de:'Belle rue commerçante et piétonne très fréquentée. Parfait pour offre journée. Clientèle touristique internationale et résidents premium du 7e.', co:'Coffee shop, brunch, salon de thé, épicerie fine' },
+  { id:'L019', t:'Restaurant Bastille', a:11, q:'Bastille', sr:98, st:122, ex:true, l4:false, te:18, ip:40, fa:5.8, ag:true, lo:58000, pr:350000, et:'correct', en:'Sorties, bureaux, résidents, destination', de:'Potentiel hybride midi-soir dans quartier très actif. Angle intéressant. Loyer accessible. Local à rafraîchir. Ticket moyen accessible.', co:'Bistrot, brasserie accessible, restaurant de quartier' },
+  { id:'L020', t:'Local haut de gamme Invalides', a:7, q:'Invalides', sr:146, st:190, ex:true, l4:false, te:14, ip:46, fa:7.6, ag:false, lo:102000, pr:820000, et:'très bon', en:'Bureaux premium, institutions, clientèle aisée', de:'Très belle tenue générale. Clientèle institutionnelle et d\'affaires. Adapté à un concept soigné avec fort service midi.', co:'Restaurant d\'affaires, gastronomique, brasserie premium' },
+  { id:'L021', t:'Snacking Châtelet-Les Halles', a:1, q:'Châtelet', sr:65, st:75, ex:true, l4:false, te:0, ip:20, fa:5.2, ag:false, lo:52000, pr:280000, et:'bon', en:'Flux transport, tourisme, étudiants', de:'Emplacement à très fort débit passager. Adapté à un concept rapide et efficace. Fort potentiel de volume.', co:'Restauration rapide, sandwicherie premium, burger artisanal' },
+  { id:'L022', t:'Brasserie Montparnasse', a:14, q:'Montparnasse', sr:145, st:200, ex:true, l4:true, te:28, ip:65, fa:9.1, ag:false, lo:98000, pr:780000, et:'correct', en:'Bureaux, résidentiel, tourisme', de:'Format brasserie classique dans quartier très fréquenté. Grande terrasse. Loyer cohérent. Local nécessitant remise au goût du jour.', co:'Brasserie, café-restaurant, restaurant familial' },
+  { id:'L023', t:'Bar à vins Abbesses', a:18, q:'Abbesses', sr:55, st:68, ex:false, l4:true, te:8, ip:22, fa:4.9, ag:false, lo:38000, pr:220000, et:'très bon', en:'Bobo, jeune, soirée, destination', de:'Quartier Abbesses très couru, bar à vins naturels en plein essor. Licence IV. Terrasse sur rue piétonne.', co:'Bar à vins naturels, cave à manger, tapas' },
+  { id:'L024', t:'Restaurant fusion Oberkampf', a:11, q:'Oberkampf', sr:88, st:110, ex:true, l4:false, te:12, ip:36, fa:6.3, ag:false, lo:62000, pr:420000, et:'bon', en:'Jeune, créatif, soir fort', de:'Local en très bonne configuration pour un concept fusion ou créatif. Quartier Oberkampf dynamique le soir.', co:'Fusion cuisine, restaurant créatif, bistronomie' },
+  { id:'L025', t:'Café brunch Marais Nord', a:3, q:'Marais Nord', sr:72, st:88, ex:false, l4:false, te:14, ip:30, fa:6.5, ag:false, lo:58000, pr:360000, et:'très bon', en:'Tourisme, LGBTQ+, week-end fort', de:'Idéal pour café-brunch dans une rue très touristique du Marais. Terrasse agréable. Fort flux week-end. Pas d\'extraction.', co:'Café, brunch, smoothies, food sain' },
+  { id:'L026', t:'Restaurant japonais Palais-Royal', a:1, q:'Palais-Royal', sr:95, st:115, ex:true, l4:false, te:0, ip:40, fa:5.8, ag:false, lo:85000, pr:650000, et:'très bon', en:'Luxe, tourisme international, affaires', de:'Local idéal pour concept japonais ou asiatique premium. Extraction présente. Quartier de luxe avec clientèle internationale exigeante.', co:'Restaurant japonais, cuisine asiatique premium, omakase' },
+  { id:'L027', t:'Brasserie angle Daumesnil', a:12, q:'Daumesnil', sr:135, st:180, ex:true, l4:false, te:22, ip:58, fa:8.7, ag:true, lo:82000, pr:620000, et:'bon', en:'Résidentiel, familles, flux quotidien', de:'Belle configuration d\'angle dans quartier résidentiel dynamique. Terrasse bien exposée. Clientèle familiale et de quartier.', co:'Brasserie de quartier, café-restaurant, bistrot' },
+  { id:'L028', t:'Cantine Saint-Denis', a:10, q:'Saint-Denis', sr:98, st:125, ex:true, l4:false, te:0, ip:42, fa:6.1, ag:false, lo:55000, pr:320000, et:'correct', en:'Bureaux, quartier en transformation', de:'Quartier en forte transformation. Local efficace pour cantine urbaine. Bon flux déjeuner professionnel. Loyer attractif.', co:'Cantine, lunch bar, restauration d\'entreprise' },
+  { id:'L029', t:'Restaurant gastronomique Passy', a:16, q:'Passy', sr:118, st:155, ex:true, l4:true, te:10, ip:48, fa:7.2, ag:false, lo:92000, pr:720000, et:'très bon', en:'Résidentiel très aisé, destination', de:'Quartier résidentiel ultra premium. Local parfait pour gastronomique ou bistronomique haut de gamme. Clientèle fidèle et aisée.', co:'Gastronomique, bistronomie premium, restaurant de quartier aisé' },
+  { id:'L030', t:'Comptoir Beaubourg', a:4, q:'Beaubourg', sr:42, st:50, ex:true, l4:false, te:0, ip:12, fa:4.1, ag:false, lo:38000, pr:180000, et:'bon', en:'Tourisme intense, étudiants, flux', de:'Très petit local à fort débit potentiel dans l\'un des quartiers les plus fréquentés de Paris. Adapté à la vente à emporter ou au format comptoir.', co:'Street food, vente à emporter, burger artisanal' },
+  { id:'L031', t:'Restaurant terrasse Odéon', a:6, q:'Odéon', sr:125, st:158, ex:true, l4:false, te:20, ip:52, fa:7.4, ag:false, lo:95000, pr:820000, et:'très bon', en:'Intellectuels, étudiants aisés, tourisme', de:'Quartier d\'Odéon très prisé. Belle terrasse sur rue animée. Local en parfait état. Clientèle mélangée et cultivée.', co:'Bistronomie, brasserie littéraire, cuisine française moderne' },
+  { id:'L032', t:'Bar festif rue de Lappe', a:11, q:'Bastille / Lappe', sr:110, st:135, ex:false, l4:true, te:0, ip:45, fa:5.9, ag:false, lo:68000, pr:490000, et:'bon', en:'Nuit, concerts, jeune public', de:'Rue de Lappe, haut lieu de la nuit parisienne. Licence IV. Grand espace. Idéal pour bar animé avec programmation musicale.', co:'Bar festif, concert bar, bar à cocktails' },
+  { id:'L033', t:'Épicerie fine Courcelles', a:17, q:'Courcelles', sr:62, st:78, ex:false, l4:false, te:0, ip:18, fa:5.5, ag:false, lo:46000, pr:280000, et:'très bon', en:'CSP++, résidentiel très aisé', de:'Local idéal pour épicerie fine, traiteur ou cave à manger de quartier. Pas d\'extraction. Clientèle très aisée et fidèle.', co:'Épicerie fine, traiteur, cave à manger froide' },
+  { id:'L034', t:'Restaurant Belleville tendance', a:20, q:'Belleville', sr:80, st:98, ex:true, l4:false, te:14, ip:32, fa:5.6, ag:false, lo:42000, pr:240000, et:'correct', en:'Artistique, multiculturel, tendance', de:'Belleville en pleine mutation. Quartier tendance et créatif. Local accessible avec terrasse. Fort potentiel pour concept identitaire.', co:'Restaurant créatif, bistrot naturel, cuisine fusion' },
+  { id:'L035', t:'Cantine tech Sentier', a:2, q:'Sentier', sr:110, st:140, ex:true, l4:false, te:8, ip:48, fa:6.8, ag:false, lo:72000, pr:520000, et:'bon', en:'Startups, digital, fort déjeuner professionnel', de:'Quartier numérique de Paris. Fort flux déjeuner de cadres. Configuration idéale pour grande cantine qualitative.', co:'Cantine urbaine premium, lunch gastronomique' },
+  { id:'L036', t:'Pizzeria Buttes-Chaumont', a:19, q:'Buttes-Chaumont', sr:75, st:90, ex:true, l4:false, te:16, ip:30, fa:5.9, ag:false, lo:40000, pr:210000, et:'bon', en:'Familles, jeunes, week-end actif', de:'Quartier résidentiel jeune et familial. Terrasse appréciée l\'été. Loyer accessible. Idéal pour pizzeria ou trattoria de quartier.', co:'Pizzeria, trattoria, restaurant familial' },
+  { id:'L037', t:'Restaurant asiatique Arts et Métiers', a:3, q:'Arts et Métiers', sr:85, st:105, ex:true, l4:false, te:0, ip:38, fa:5.4, ag:false, lo:58000, pr:370000, et:'bon', en:'Bureaux, résidentiel, midi fort', de:'Secteur actif le midi avec clientèle de professionnels. Extraction présente. Adapté à un concept asiatique ou fusion.', co:'Restaurant asiatique, cuisine fusion, wok rapide' },
+  { id:'L038', t:'Grande salle République', a:10, q:'République', sr:180, st:280, ex:true, l4:true, te:0, ip:120, fa:8.5, ag:false, lo:115000, pr:950000, et:'correct', en:'Urbain, polyvalent, fort flux', de:'Très grande capacité rare à Paris. Licence IV. Extraction. Adapté à une grande brasserie ou restaurant événementiel.', co:'Grande brasserie, restaurant événementiel, groupe' },
+  { id:'L039', t:'Café librairie Saint-Germain', a:6, q:'Saint-Germain', sr:68, st:82, ex:false, l4:false, te:6, ip:28, fa:5.8, ag:false, lo:61000, pr:350000, et:'très bon', en:'Culturel, littéraire, tourisme qualitatif', de:'Concept café-librairie dans quartier culturel emblématique. Sans extraction. Idéal pour salon de thé ou café littéraire.', co:'Café librairie, salon de thé, café culturel' },
+  { id:'L040', t:'Restaurant Trocadéro vue dégagée', a:16, q:'Trocadéro', sr:155, st:200, ex:true, l4:false, te:30, ip:62, fa:9.4, ag:true, lo:124000, pr:1100000, et:'très bon', en:'Tourisme international, aisé', de:'Emplacement exceptionnel. Grande terrasse. Format premium. Clientèle internationale très aisée. Prix élevé mais cohérent.', co:'Restaurant de destination, gastronomique, brasserie premium' },
+  { id:'L041', t:'Ramen bar Pigalle', a:9, q:'Pigalle', sr:62, st:75, ex:true, l4:false, te:0, ip:24, fa:4.8, ag:false, lo:54000, pr:310000, et:'bon', en:'Soirée, jeune, tendance', de:'Petit local efficace dans Pigalle. Extraction présente. Adapté à un ramen bar ou concept asiatique nocturne.', co:'Ramen bar, restaurant asiatique, izakaya' },
+  { id:'L042', t:'Brunch Montmartre', a:18, q:'Montmartre', sr:78, st:95, ex:false, l4:false, te:18, ip:32, fa:6.2, ag:false, lo:52000, pr:340000, et:'très bon', en:'Tourisme massif, week-end, artistes', de:'Montmartre est une destination touristique majeure. Belle terrasse sur rue pavée. Pas d\'extraction. Fort pour brunch et café journée.', co:'Café-brunch, salon de thé, restaurant touristique' },
+  { id:'L043', t:'Restaurant familial Alésia', a:14, q:'Alésia', sr:90, st:112, ex:true, l4:false, te:10, ip:38, fa:6.0, ag:false, lo:58000, pr:380000, et:'bon', en:'Résidentiel, familles, commerces', de:'Quartier résidentiel stable. Local bien configuré pour restaurant de quartier familial. Extraction présente. Loyer raisonnable.', co:'Restaurant familial, bistrot, brasserie de quartier' },
+  { id:'L044', t:'Bar à champagne Madeleine', a:8, q:'Madeleine', sr:72, st:88, ex:false, l4:true, te:8, ip:28, fa:6.1, ag:false, lo:78000, pr:580000, et:'très bon', en:'Luxe, affaires, hôtels de luxe', de:'Quartier ultra premium. Licence IV. Sans extraction. Idéal pour bar à champagne, huîtres ou concept de standing.', co:'Bar à champagne, bar à huîtres, bar à vins premium' },
+  { id:'L045', t:'Food hall Châtelet', a:1, q:'Châtelet', sr:200, st:300, ex:true, l4:true, te:0, ip:100, fa:10.2, ag:false, lo:148000, pr:1400000, et:'à rénover', en:'Flux massif, tourisme, transport', de:'Très grand espace à fort potentiel. Licence IV. Extraction. Travaux à prévoir. Emplacement à flux exceptionnel.', co:'Food hall, grande brasserie, restaurant événementiel' },
+  { id:'L046', t:'Bistrot Gambetta', a:20, q:'Gambetta', sr:85, st:105, ex:true, l4:false, te:12, ip:36, fa:5.8, ag:false, lo:46000, pr:250000, et:'correct', en:'Résidentiel, populaire, authentique', de:'Quartier résidentiel authentique de l\'est parisien. Bon local avec extraction et petite terrasse. Clientèle fidèle de quartier.', co:'Bistrot traditionnel, café-restaurant, brasserie populaire' },
+  { id:'L047', t:'Restaurant quai de Bercy', a:12, q:'Bercy', sr:138, st:175, ex:true, l4:false, te:24, ip:56, fa:8.8, ag:false, lo:88000, pr:720000, et:'bon', en:'Bureau, résidentiel neuf, destination', de:'Quai avec vue sur Seine. Terrasse appréciée en saison. Quartier Bercy en fort développement. Clientèle de cadres et de destination.', co:'Restaurant de destination, brasserie contemporaine, fish and wine' },
+  { id:'L048', t:'Crêperie Montparnasse', a:6, q:'Montparnasse', sr:58, st:70, ex:true, l4:false, te:8, ip:22, fa:5.1, ag:false, lo:49000, pr:270000, et:'bon', en:'Tourisme, étudiants, résidentiel', de:'Secteur historiquement lié à la crêperie bretonne. Extraction présente. Petite terrasse. Idéal pour crêperie ou bistrot breton.', co:'Crêperie, galetterie, bistrot breton' },
+  { id:'L049', t:'Restaurant Belleville Est', a:20, q:'Belleville', sr:95, st:118, ex:true, l4:false, te:0, ip:40, fa:5.5, ag:false, lo:44000, pr:230000, et:'correct', en:'Multiculturel, communautaire, vivant', de:'Quartier de Belleville très vivant et multiculturel. Bon local avec extraction. Idéal pour restaurant cuisine du monde.', co:'Cuisine du monde, restaurant de quartier, concept communautaire' },
+  { id:'L050', t:'Brasserie Grands Boulevards', a:9, q:'Grands Boulevards', sr:168, st:220, ex:true, l4:true, te:30, ip:80, fa:10.8, ag:true, lo:118000, pr:980000, et:'bon', en:'Bureaux, théâtres, tourisme, shopping', de:'Emplacement iconique sur les Grands Boulevards. Très grande façade d\'angle. Licence IV. Configuration parfaite pour grande brasserie parisienne.', co:'Grande brasserie parisienne, café-théâtre, restaurant de boulevard' },
+];
+
+let lastR = [];
+let lastC = null;
+let activePill = null;
+
+function initPills() {
+  const el = document.getElementById('ppills');
+  el.innerHTML = BUYERS.map(b => `<button class="pill-btn" data-id="${b.id}" onclick="selectBuyer(this,'${b.id}')">${b.name}</button>`).join('');
+}
+
+function selectBuyer(el, id) {
+  document.querySelectorAll('.pill-btn').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  const b = BUYERS.find(x => x.id === id);
+  document.getElementById('sinput').value = b.txt;
+}
+
+async function extractCriteria(txt) {
+  if (!apiKey) return fallback(txt);
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:600,
+        system:`Expert immobilier CHR Paris. Extrais les critères depuis le texte. Réponds UNIQUEMENT avec un JSON valide sans markdown ni commentaires.
+Format exact : {"zones":[2,9],"surfMin":100,"surfMax":200,"loyerMax":80000,"budgetMax":600000,"extraction":true,"terrasse":true,"licence4":false,"placesMin":40,"fluxMidi":true,"fluxSoir":true,"concept":"","env":"","redhibitoires":""}
+zones = arrondissements Paris (entiers 1-20). Mets null si non mentionné.`,
+        messages:[{role:'user',content:txt}]
+      })
+    });
+    const d = await r.json();
+    const raw = d.content?.[0]?.text || '';
+    return JSON.parse(raw.replace(/```json|```/g,'').trim());
+  } catch(e) { return fallback(txt); }
+}
+
+function fallback(txt) {
+  const t = txt.toLowerCase();
+  const zones = []; const m = txt.match(/\b([1-9]|1[0-9]|20)(e|er|ème|eme)?\b/g)||[];
+  m.forEach(n => { const v = parseInt(n); if(v>=1&&v<=20) zones.push(v); });
+  const loyerM = txt.match(/(\d[\d\s]*)\s*[€]?\s*\/?\s*an|loyer\s+max\s+(\d[\d\s]*)/i);
+  const surfM = txt.match(/(\d+)\s*[àa-]\s*(\d+)\s*m/i);
+  return {
+    zones: zones.length ? [...new Set(zones)] : null,
+    surfMin: surfM ? parseInt(surfM[1]) : 80,
+    surfMax: surfM ? parseInt(surfM[2]) : 180,
+    loyerMax: loyerM ? parseInt((loyerM[1]||loyerM[2]).replace(/\s/g,'')) : 80000,
+    budgetMax: null,
+    extraction: t.includes('extraction'),
+    terrasse: t.includes('terrasse'),
+    licence4: t.includes('licence') || t.includes('license'),
+    placesMin: 20, fluxMidi: t.includes('midi'), fluxSoir: t.includes('soir'),
+    concept:'', env:'', redhibitoires:''
+  };
+}
+
+function calcScore(c, l) {
+  let s = 0, reasons = [], alerts = [], rej = false;
+  if (c.extraction && !l.ex) { rej=true; alerts.push('Extraction absente (obligatoire)'); }
+  if (c.terrasse && l.te < 8) { rej=true; alerts.push('Terrasse insuffisante (obligatoire)'); }
+  if (c.loyerMax && l.lo > c.loyerMax*1.3) { rej=true; alerts.push('Loyer trop élevé'); }
+  if (c.surfMin && l.st < c.surfMin*0.72) { rej=true; alerts.push('Surface insuffisante'); }
+  if (rej) return {s:0, reasons, alerts, rej:true};
+
+  // Zone 25pts
+  if (c.zones?.length) {
+    if (c.zones.includes(l.a)) { s+=25; reasons.push(`Paris ${l.a}e · zone cible ✓`); }
+    else s+=4;
+  } else s+=14;
+
+  // Surface 20pts
+  const smin = c.surfMin||0, smax = c.surfMax||9999;
+  if (l.st >= smin && l.st <= smax) { s+=20; reasons.push(`${l.st} m² · surface idéale ✓`); }
+  else if (l.st >= smin*0.85) { s+=11; }
+  else s+=3;
+
+  // Technique 20pts
+  if (l.ex) { s+=10; if(c.extraction) reasons.push('Extraction présente ✓'); else s+=2; }
+  if (c.terrasse && l.te >= (c.placesMin||8)*0.4) { s+=10; reasons.push(`Terrasse ${l.te} places ✓`); }
+  else if (l.te > 0) s+=4;
+  if (c.licence4 && l.l4) { s+=4; reasons.push('Licence IV ✓'); }
+  else if (c.licence4 && !l.l4) alerts.push('Pas de licence IV');
+
+  // Économie 15pts
+  if (c.loyerMax) {
+    if (l.lo <= c.loyerMax) { s+=10; reasons.push('Loyer dans cible ✓'); }
+    else if (l.lo <= c.loyerMax*1.1) { s+=6; alerts.push('Loyer légèrement au-dessus'); }
+    else { s+=2; alerts.push('Loyer haut de fourchette'); }
+  } else s+=8;
+  if (c.budgetMax) { if(l.pr<=c.budgetMax) s+=5; else alerts.push('Prix au-dessus du budget'); }
+  else s+=3;
+
+  s+=7; // flux
+
+  // Façade 10pts
+  if (l.fa >= 8) { s+=7; reasons.push('Grande façade ✓'); }
+  else if (l.fa >= 6) s+=4;
+  if (l.ag) { s+=3; reasons.push('Angle ✓'); }
+
+  if (!alerts.length && reasons.length >= 3) reasons.push('Cohérence globale excellente');
+  return { s: Math.min(100, Math.round(s)), reasons, alerts, rej:false };
+}
+
+async function doSearch() {
+  const txt = document.getElementById('sinput').value.trim();
+  if (!txt) { toast('Décrivez le besoin acheteur'); return; }
+  document.getElementById('btngo').disabled = true;
+  document.getElementById('crit-out').innerHTML = '';
+  document.getElementById('res-out').innerHTML = '';
+  setLoader(true, 'Extraction des critères…');
+
+  const c = await extractCriteria(txt);
+  lastC = c;
+  renderCritBox(c);
+  setLoader(true, 'Matching sur 50 annonces…');
+  await new Promise(r => setTimeout(r,300));
+
+  const results = L.map(l => { const sc = calcScore(c,l); return {l, ...sc}; })
+    .filter(r => !r.rej).sort((a,b) => b.s - a.s);
+  lastR = results;
+  setLoader(false);
+  document.getElementById('btngo').disabled = false;
+  renderResults(results);
+}
+
+function setLoader(on, txt) {
+  const el = document.getElementById('loader');
+  el.classList.toggle('on', on);
+  if (txt) document.getElementById('ltxt').textContent = txt;
+}
+
+function renderCritBox(c) {
+  const items = [];
+  if (c.zones) items.push({k:'Zones', v: c.zones.slice(0,5).map(z=>`${z}e`).join(', ')+(c.zones.length>5?'…':'')});
+  if (c.surfMin||c.surfMax) items.push({k:'Surface', v:`${c.surfMin||'?'}–${c.surfMax||'?'} m²`});
+  if (c.loyerMax) items.push({k:'Loyer max', v:`${(c.loyerMax/1000).toFixed(0)}k €/an`});
+  if (c.budgetMax) items.push({k:'Budget', v:`${(c.budgetMax/1000).toFixed(0)}k €`});
+  items.push({k:'Extraction', v: c.extraction ? '<span class="ptag p-green">Obligatoire</span>' : '<span class="ptag p-gray">Non requise</span>'});
+  items.push({k:'Terrasse', v: c.terrasse ? '<span class="ptag p-green">Obligatoire</span>' : '<span class="ptag p-gray">Optionnelle</span>'});
+  items.push({k:'Licence IV', v: c.licence4 ? '<span class="ptag p-green">Souhaitée</span>' : '<span class="ptag p-gray">Non requise</span>'});
+  const flux = [c.fluxMidi?'Midi':'',c.fluxSoir?'Soir':''].filter(Boolean).join(' + ');
+  if (flux) items.push({k:'Flux', v: flux});
+  document.getElementById('crit-out').innerHTML = `
+    <div class="crit-box">
+      <div class="crit-head"><span class="crit-lbl">Critères extraits</span><span class="ai-tag">${apiKey?'IA Claude':'Analyse auto'}</span></div>
+      <div class="crit-grid">${items.map(i=>`<div class="crit-item"><div class="crit-k">${i.k}</div><div class="crit-v">${i.v}</div></div>`).join('')}</div>
+      ${c.redhibitoires?`<div style="margin-top:9px;font-size:12px;color:var(--gris-texte);"><strong>Rédhibitoires :</strong> ${c.redhibitoires}</div>`:''}
+    </div>`;
+}
+
+function renderResults(results) {
+  const el = document.getElementById('res-out');
+  if (!results.length) { el.innerHTML = '<div class="empty"><div class="empty-h">Aucun résultat</div><div class="empty-p">Essayez d\'assouplir les critères obligatoires.</div></div>'; return; }
+  const top = results.slice(0,10);
+  el.innerHTML = `<div class="sec-bar"><div class="sec-title">${top.length} résultat${top.length>1?'s':''}</div><div class="sec-count">Sur 50 annonces · Paris</div></div>
+  <div class="results">${top.map((r,i)=>cardHTML(r,i)).join('')}</div>`;
+}
+
+function cardHTML(r, i) {
+  const sc = r.s;
+  const cls = sc>=75?'high':sc>=55?'mid':'low';
+  const bc = i===0?' best':'';
+  return `<div class="rcard${bc}" onclick="showDet('${r.l.id}')">
+    <div class="rcard-head">
+      <div class="score-ring sr-${cls}"><div class="score-n sn-${cls}">${sc}</div><div class="score-s">/100</div></div>
+      <div class="rcard-info">
+        <div class="rname">${r.l.t}${i===0?'<span class="best-crown">Meilleur match</span>':''}</div>
+        <div class="rmeta">Paris ${r.l.a}e · ${r.l.q} · ${r.l.st} m² · ${(r.l.lo/1000).toFixed(0)}k €/an · ${(r.l.pr/1000).toFixed(0)}k €</div>
+      </div>
+    </div>
+    <div class="bar-bg"><div class="bar-fill bf-${cls}" style="width:${sc}%"></div></div>
+    <div class="tags">
+      ${r.reasons.slice(0,3).map(x=>`<span class="tag tg">${x}</span>`).join('')}
+      ${r.alerts.slice(0,2).map(x=>`<span class="tag ta">${x}</span>`).join('')}
+    </div>
+    <div class="rdesc">${r.l.de.slice(0,115)}…</div>
+  </div>`;
+}
+
+function showDet(id) {
+  const l = L.find(x => x.id === id);
+  const m = lastR.find(r => r.l.id === id);
+  if (!l) return;
+  const sc = m ? m.s : 0;
+  const cls = sc>=75?'high':sc>=55?'mid':'low';
+  const args = m ? m.reasons : [];
+  const al = m ? m.alerts : [];
+  document.getElementById('det-content').innerHTML = `
+    <div class="det-name">${l.t}</div>
+    <div class="det-meta">Paris ${l.a}e · ${l.q}</div>
+    ${m?`<div class="score-disp"><div class="score-big sb-${cls}">${sc}</div><div style="font-size:12px;color:var(--gris-texte);">/ 100<br>Score de match</div></div>`:''}
+    <div class="det-grid">
+      <div class="det-block">
+        <div class="det-btitle">Données clés</div>
+        <div class="drow"><span class="dk">Surface totale</span><span class="dv">${l.st} m²</span></div>
+        <div class="drow"><span class="dk">Couverts intérieur</span><span class="dv">${l.ip>0?l.ip+' pl.':'—'}</span></div>
+        <div class="drow"><span class="dk">Terrasse</span><span class="dv">${l.te>0?l.te+' places':'Aucune'}</span></div>
+        <div class="drow"><span class="dk">Extraction</span><span class="dv">${l.ex?'✓ Présente':'✗ Absente'}</span></div>
+        <div class="drow"><span class="dk">Licence IV</span><span class="dv">${l.l4?'✓ Oui':'✗ Non'}</span></div>
+        <div class="drow"><span class="dk">Façade</span><span class="dv">${l.fa} ml${l.ag?' · Angle':''}</span></div>
+      </div>
+      <div class="det-block">
+        <div class="det-btitle">Économique</div>
+        <div class="drow"><span class="dk">Loyer annuel</span><span class="dv">${l.lo.toLocaleString('fr-FR')} €</span></div>
+        <div class="drow"><span class="dk">Prix de cession</span><span class="dv">${l.pr.toLocaleString('fr-FR')} €</span></div>
+        <div class="drow"><span class="dk">Bail</span><span class="dv">3/6/9</span></div>
+        <div class="drow"><span class="dk">État</span><span class="dv">${l.et}</span></div>
+      </div>
+    </div>
+    <div class="det-block" style="margin-bottom:1rem;">
+      <div class="det-btitle">Environnement</div>
+      <div style="font-size:13px;color:var(--gris-texte);line-height:1.6;">${l.en}</div>
+    </div>
+    <div class="det-block" style="margin-bottom:1.25rem;">
+      <div class="det-btitle">Description complète</div>
+      <div style="font-size:13px;color:var(--gris-texte);line-height:1.6;">${l.de}</div>
+    </div>
+    ${args.length?`<div class="sub-title">Arguments de vente</div>${args.map(a=>`<div class="arg">${a}</div>`).join('')}`:''}
+    ${al.length?`<div class="sub-title">Points de vigilance</div>${al.map(a=>`<div class="warn">${a}</div>`).join('')}`:''}
+    <div class="sub-title">Concepts adaptés</div>
+    <div class="concept-box">${l.co}</div>
+  `;
+  document.getElementById('view-main').style.display = 'none';
+  document.getElementById('view-detail').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+function backToResults() {
+  document.getElementById('view-main').style.display = 'block';
+  document.getElementById('view-detail').style.display = 'none';
+}
+
+function initListings() {
+  const el = document.getElementById('all-list');
+  el.innerHTML = L.map(l => `<div class="lrow">
+    <span class="lid">${l.id}</span>
+    <span class="lname">${l.t}</span>
+    <span class="larr">Paris ${l.a}e</span>
+    <span class="lsurf">${l.st} m²</span>
+    <span class="lloyer">${(l.lo/1000).toFixed(0)}k €</span>
+    <div class="ltags">
+      ${l.ex?'<span class="tag tg">Extr.</span>':''}
+      ${l.te>0?`<span class="tag tg">T${l.te}p</span>`:''}
+      ${l.l4?'<span class="tag tg">L4</span>':''}
+      ${l.ag?'<span class="tag tn">Angle</span>':''}
+    </div>
+  </div>`).join('');
+}
+
+function goPage(name, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('page-'+name).classList.add('on');
+  el.classList.add('on');
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'), 2200);
+}
+
+document.getElementById('sinput').addEventListener('keydown', e => {
+  if (e.key==='Enter' && (e.metaKey||e.ctrlKey)) doSearch();
+});
+
+initPills();
+initListings();
+</script>
+</body>
+</html>
