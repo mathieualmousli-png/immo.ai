@@ -206,6 +206,54 @@ nav { display: flex; align-items: center; padding: 0 1.5rem; height: 54px; borde
 .ap-red { background: var(--rouge-clair); color: var(--rouge); border-left: 3px solid var(--rouge); }
 .btn-outline { background: transparent; color: var(--noir); border: 1px solid var(--gris-border); }
 .btn-outline:hover { border-color: var(--noir); background: var(--gris-bg); }
+
+/* VOCAL */
+.mic-btn { width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid var(--gris-border); background: var(--blanc); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+.mic-btn:hover { border-color: var(--noir); }
+.mic-btn.listening { background: var(--rouge); border-color: var(--rouge); animation: pulse 1.2s ease-in-out infinite; }
+.mic-btn svg { width: 16px; height: 16px; }
+.mic-btn.listening svg { fill: white; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(155,35,53,0.4); } 50% { box-shadow: 0 0 0 8px rgba(155,35,53,0); } }
+.voice-status { font-size: 12px; color: var(--rouge); font-weight: 500; display: none; align-items: center; gap: 6px; }
+.voice-status.on { display: flex; }
+.voice-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rouge); animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
+.voice-unsupported { font-size: 11px; color: var(--gris-texte); display: none; }
+
+/* COMPARAISON */
+.compare-bar { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--noir); color: var(--blanc); padding: 10px 18px; border-radius: 20px; font-size: 13px; display: none; align-items: center; gap: 12px; z-index: 200; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+.compare-bar.on { display: flex; }
+.compare-bar button { background: var(--or); color: var(--noir); border: none; border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.compare-bar .clr { background: transparent; color: rgba(255,255,255,0.6); padding: 5px 8px; }
+.rcard-check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--gris-border); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.12s; }
+.rcard-check.on { background: var(--noir); border-color: var(--noir); }
+.rcard-check.on::after { content: '✓'; color: white; font-size: 11px; }
+
+/* PAGE COMPARAISON */
+.comp-grid { display: grid; gap: 1rem; }
+.comp-col { border: 1px solid var(--gris-border); border-radius: var(--rlg); overflow: hidden; }
+.comp-col-head { padding: 1rem 1.25rem; background: var(--gris-bg); border-bottom: 1px solid var(--gris-border); }
+.comp-col-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+.comp-col-meta { font-size: 12px; color: var(--gris-texte); }
+.comp-score { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; }
+.comp-body { padding: 1rem 1.25rem; }
+.comp-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--gris-bg); font-size: 13px; }
+.comp-row:last-child { border: none; }
+.comp-k { color: var(--gris-texte); }
+.comp-v { font-weight: 500; }
+.comp-v.win { color: var(--vert); }
+.comp-v.lose { color: var(--rouge); }
+.comp-section-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris-texte); margin: 1rem 0 6px; padding-top: 8px; border-top: 1px solid var(--gris-border); }
+
+/* EXPORT PDF - styles d'impression */
+@media print {
+  nav, .nav-tabs, .api-notice, .pills, .pills-label, .loader, .crit-out, .compare-bar, #btngo, .mic-btn, .voice-status, .back { display: none !important; }
+  body { background: white; }
+  .page { display: block !important; padding: 0; max-width: 100%; }
+  .pdf-only { display: block !important; }
+  .no-print { display: none !important; }
+}
+.pdf-only { display: none; }
 </style>
 </head>
 <body>
@@ -239,7 +287,19 @@ nav { display: flex; align-items: center; padding: 0 1.5rem; height: 54px; borde
     <div class="searchbox">
       <textarea id="sinput" placeholder="Ex : Je cherche un restaurant avec terrasse obligatoire à Paris centre, extraction indispensable, entre 110 et 160 m², loyer max 80 000 €/an, quartier mix bureaux et tourisme, fort flux midi et soir…" rows="4"></textarea>
       <div class="search-foot">
-        <span class="search-hint" id="shint">Cmd+Enter pour lancer · ou choisissez un profil ci-dessous</span>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <button class="mic-btn" id="mic-btn" onclick="toggleVoice()" title="Parler">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="2" width="6" height="12" rx="3"/>
+              <path d="M5 10a7 7 0 0 0 14 0"/>
+              <line x1="12" y1="19" x2="12" y2="22"/>
+              <line x1="8" y1="22" x2="16" y2="22"/>
+            </svg>
+          </button>
+          <div class="voice-status" id="voice-status"><div class="voice-dot"></div><span id="voice-txt">En écoute…</span></div>
+          <span class="voice-unsupported" id="voice-unsupported">Micro non disponible sur ce navigateur</span>
+          <span class="search-hint" id="shint">Cmd+Enter pour lancer · ou choisissez un profil</span>
+        </div>
         <button class="btn btn-dark" id="btngo" onclick="doSearch()">Analyser &amp; matcher →</button>
       </div>
     </div>
@@ -254,7 +314,10 @@ nav { display: flex; align-items: center; padding: 0 1.5rem; height: 54px; borde
   </div>
 
   <div id="view-detail" style="display:none">
-    <button class="back" onclick="backToResults()">← Retour aux résultats</button>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+      <button class="back" style="margin:0;" onclick="backToResults()">← Retour aux résultats</button>
+      <button class="btn btn-outline" style="font-size:12px; padding:6px 14px;" onclick="exportFichePDF(window._currentDetailId)">Exporter PDF →</button>
+    </div>
     <div id="det-content"></div>
   </div>
 </div>
@@ -434,6 +497,27 @@ nav { display: flex; align-items: center; padding: 0 1.5rem; height: 54px; borde
     </div>
   </div>
 
+</div>
+
+<!-- PAGE COMPARAISON -->
+<div class="page" id="page-comparer">
+  <div style="padding: 2rem 0 1rem;">
+    <button class="back no-print" onclick="goPage('match', document.querySelectorAll('.ntab')[0])">← Retour au matching</button>
+    <div style="font-family:'DM Serif Display',serif; font-size:26px; margin-bottom:4px;">Comparaison</div>
+    <div style="font-size:13px; color:var(--gris-texte); margin-bottom:1.5rem;">Analyse côte à côte des annonces sélectionnées</div>
+    <div style="display:flex; gap:10px; margin-bottom:1.5rem;" class="no-print">
+      <button class="btn btn-dark" onclick="exportPDF()">Exporter en PDF →</button>
+      <button class="btn btn-outline" onclick="resetCompare()">Nouvelle sélection</button>
+    </div>
+  </div>
+  <div id="comp-content"></div>
+</div>
+
+<!-- BARRE FLOTTANTE COMPARAISON -->
+<div class="compare-bar" id="compare-bar">
+  <span id="compare-count">0 annonce sélectionnée</span>
+  <button onclick="launchCompare()">Comparer →</button>
+  <button class="clr" onclick="resetCompare()">✕</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -679,20 +763,21 @@ function cardHTML(r, i) {
   const sc = r.s;
   const cls = sc>=75?'high':sc>=55?'mid':'low';
   const bc = i===0?' best':'';
-  return `<div class="rcard${bc}" onclick="showDet('${r.l.id}')">
+  return `<div class="rcard${bc}" id="rcard-${r.l.id}">
     <div class="rcard-head">
       <div class="score-ring sr-${cls}"><div class="score-n sn-${cls}">${sc}</div><div class="score-s">/100</div></div>
-      <div class="rcard-info">
+      <div class="rcard-info" onclick="showDet('${r.l.id}')" style="cursor:pointer;">
         <div class="rname">${r.l.t}${i===0?'<span class="best-crown">Meilleur match</span>':''}</div>
         <div class="rmeta">Paris ${r.l.a}e · ${r.l.q} · ${r.l.st} m² · ${(r.l.lo/1000).toFixed(0)}k €/an · ${(r.l.pr/1000).toFixed(0)}k €</div>
       </div>
+      <div class="rcard-check" id="chk-${r.l.id}" onclick="toggleCompare('${r.l.id}')" title="Ajouter à la comparaison"></div>
     </div>
     <div class="bar-bg"><div class="bar-fill bf-${cls}" style="width:${sc}%"></div></div>
     <div class="tags">
       ${r.reasons.slice(0,3).map(x=>`<span class="tag tg">${x}</span>`).join('')}
       ${r.alerts.slice(0,2).map(x=>`<span class="tag ta">${x}</span>`).join('')}
     </div>
-    <div class="rdesc">${r.l.de.slice(0,115)}…</div>
+    <div class="rdesc" onclick="showDet('${r.l.id}')" style="cursor:pointer;">${r.l.de.slice(0,115)}…</div>
   </div>`;
 }
 
@@ -741,6 +826,7 @@ function showDet(id) {
   `;
   document.getElementById('view-main').style.display = 'none';
   document.getElementById('view-detail').style.display = 'block';
+  window._currentDetailId = id;
   window.scrollTo(0,0);
 }
 
@@ -1037,6 +1123,260 @@ function resetForm() {
   document.getElementById('view-audit').style.display = 'none';
 }
 
+// ===== COMPARAISON =====
+let compareSet = new Set();
+
+function toggleCompare(id) {
+  if (compareSet.has(id)) {
+    compareSet.delete(id);
+    document.getElementById('chk-'+id)?.classList.remove('on');
+  } else {
+    if (compareSet.size >= 3) { toast('Maximum 3 annonces à comparer'); return; }
+    compareSet.add(id);
+    document.getElementById('chk-'+id)?.classList.add('on');
+  }
+  updateCompareBar();
+}
+
+function updateCompareBar() {
+  const bar = document.getElementById('compare-bar');
+  const n = compareSet.size;
+  if (n === 0) { bar.classList.remove('on'); return; }
+  bar.classList.add('on');
+  document.getElementById('compare-count').textContent = n === 1 ? '1 annonce sélectionnée' : `${n} annonces sélectionnées`;
+}
+
+function resetCompare() {
+  compareSet.forEach(id => document.getElementById('chk-'+id)?.classList.remove('on'));
+  compareSet.clear();
+  updateCompareBar();
+}
+
+function launchCompare() {
+  if (compareSet.size < 2) { toast('Sélectionnez au moins 2 annonces'); return; }
+  const ids = [...compareSet];
+  const listings = ids.map(id => {
+    const l = L.find(x => x.id === id);
+    const m = lastR.find(r => r.l.id === id);
+    return { l, score: m ? m.s : null, reasons: m ? m.reasons : [], alerts: m ? m.alerts : [] };
+  });
+  renderCompare(listings);
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById('page-comparer').classList.add('on');
+  window.scrollTo(0,0);
+}
+
+function renderCompare(items) {
+  const cols = items.length;
+  const fields = [
+    { k:'Arrondissement', fn: l => `Paris ${l.a}e · ${l.q}` },
+    { k:'Surface totale', fn: l => `${l.st} m²`, num: l => l.st },
+    { k:'Couverts intérieur', fn: l => l.ip > 0 ? `${l.ip} pl.` : '—', num: l => l.ip },
+    { k:'Terrasse', fn: l => l.te > 0 ? `${l.te} pl.` : 'Aucune', num: l => l.te },
+    { k:'Extraction', fn: l => l.ex ? '✓ Oui' : '✗ Non' },
+    { k:'Licence IV', fn: l => l.l4 ? '✓ Oui' : '✗ Non' },
+    { k:'Façade', fn: l => `${l.fa} ml${l.ag?' · Angle':''}`, num: l => l.fa },
+    { k:'Prix cession', fn: l => l.pr.toLocaleString('fr-FR')+' €', num: l => -l.pr },
+    { k:'Loyer annuel', fn: l => l.lo.toLocaleString('fr-FR')+' €', num: l => -l.lo },
+    { k:'État', fn: l => l.et },
+  ];
+
+  const gridCols = cols === 2 ? '1fr 1fr' : '1fr 1fr 1fr';
+
+  let html = `<div class="comp-grid" style="grid-template-columns:${gridCols};">`;
+  items.forEach(item => {
+    const { l, score, reasons, alerts } = item;
+    const cls = score >= 75 ? 'high' : score >= 55 ? 'mid' : 'low';
+    html += `<div class="comp-col">
+      <div class="comp-col-head">
+        <div class="comp-col-name">${l.t}</div>
+        <div class="comp-col-meta">Paris ${l.a}e · ${l.q}</div>
+        ${score !== null ? `<div class="comp-score"><div class="score-ring sr-${cls}" style="width:38px;height:38px;"><div class="score-n sn-${cls}" style="font-size:14px;">${score}</div></div><span style="font-size:12px;color:var(--gris-texte);">/100</span></div>` : ''}
+      </div>
+      <div class="comp-body">`;
+
+    fields.forEach(f => {
+      let winClass = '';
+      if (f.num) {
+        const vals = items.map(it => f.num(it.l));
+        const best = Math.max(...vals);
+        if (f.num(l) === best && vals.filter(v=>v===best).length === 1) winClass = ' win';
+        else if (f.num(l) === Math.min(...vals) && vals.filter(v=>v===Math.min(...vals)).length === 1) winClass = ' lose';
+      }
+      html += `<div class="comp-row"><span class="comp-k">${f.k}</span><span class="comp-v${winClass}">${f.fn(l)}</span></div>`;
+    });
+
+    if (reasons.length || alerts.length) {
+      html += `<div class="comp-section-title">Points clés</div>`;
+      reasons.slice(0,2).forEach(r => html += `<div class="audit-point ap-green" style="margin-bottom:4px;font-size:12px;">${r}</div>`);
+      alerts.slice(0,2).forEach(a => html += `<div class="audit-point ap-amber" style="margin-bottom:4px;font-size:12px;">${a}</div>`);
+    }
+
+    html += `<div class="comp-section-title">Description</div>
+      <div style="font-size:12px;color:var(--gris-texte);line-height:1.5;">${l.de}</div>
+      <div class="comp-section-title">Concepts</div>
+      <div style="font-size:12px;color:var(--gris-texte);">${l.co}</div>
+      </div></div>`;
+  });
+  html += '</div>';
+  document.getElementById('comp-content').innerHTML = html;
+}
+
+// ===== EXPORT PDF =====
+function exportPDF() {
+  const currentPage = document.querySelector('.page.on');
+  if (!currentPage) return;
+  toast('Ouverture de l\'impression…');
+  setTimeout(() => window.print(), 300);
+}
+
+function exportFichePDF(listingId) {
+  const l = L.find(x => x.id === listingId);
+  const m = lastR.find(r => r.l.id === listingId);
+  if (!l) return;
+  const sc = m ? m.s : '—';
+  const reasons = m ? m.reasons : [];
+  const alerts = m ? m.alerts : [];
+  const printWin = window.open('', '_blank');
+  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Fiche — ${l.t}</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #0f0f0f; padding: 2rem; max-width: 800px; margin: 0 auto; font-size: 13px; line-height: 1.6; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    .meta { color: #6b6860; font-size: 12px; margin-bottom: 1.5rem; }
+    .score-badge { display: inline-block; background: ${sc>=75?'#e8f4ee':sc>=55?'#faeeda':'#f9ece8'}; color: ${sc>=75?'#2d6a4f':sc>=55?'#8a6520':'#9b2335'}; padding: 4px 14px; border-radius: 20px; font-size: 18px; font-weight: 500; margin-bottom: 1.5rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .block { background: #f2f0eb; border-radius: 8px; padding: 1rem; }
+    .block-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6860; margin-bottom: 8px; }
+    .row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #e0ddd6; font-size: 12px; }
+    .row:last-child { border: none; }
+    .label { color: #6b6860; }
+    .val { font-weight: 500; }
+    .point { padding: 6px 10px; border-radius: 4px; margin-bottom: 5px; font-size: 12px; }
+    .green { background: #e8f4ee; color: #1a4a35; border-left: 3px solid #2d6a4f; }
+    .amber { background: #faeeda; color: #8a6520; border-left: 3px solid #c9a84c; }
+    .header-bar { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #0f0f0f; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .logo { font-size: 16px; font-weight: 500; }
+    .date { font-size: 11px; color: #6b6860; }
+    @media print { body { padding: 1rem; } }
+  </style></head><body>
+  <div class="header-bar"><span class="logo">Copilote·CHR</span><span class="date">Fiche générée le ${new Date().toLocaleDateString('fr-FR')}</span></div>
+  <h1>${l.t}</h1>
+  <div class="meta">Paris ${l.a}e · ${l.q} · Réf. ${l.id}</div>
+  ${sc !== '—' ? `<div class="score-badge">Score de match : ${sc}/100</div>` : ''}
+  <div class="grid">
+    <div class="block">
+      <div class="block-title">Données clés</div>
+      <div class="row"><span class="label">Surface totale</span><span class="val">${l.st} m²</span></div>
+      <div class="row"><span class="label">Couverts intérieur</span><span class="val">${l.ip > 0 ? l.ip+' pl.' : '—'}</span></div>
+      <div class="row"><span class="label">Terrasse</span><span class="val">${l.te > 0 ? l.te+' places' : 'Aucune'}</span></div>
+      <div class="row"><span class="label">Extraction</span><span class="val">${l.ex ? '✓ Oui' : '✗ Non'}</span></div>
+      <div class="row"><span class="label">Licence IV</span><span class="val">${l.l4 ? '✓ Oui' : '✗ Non'}</span></div>
+      <div class="row"><span class="label">Façade</span><span class="val">${l.fa} ml${l.ag?' · Angle':''}</span></div>
+      <div class="row"><span class="label">État</span><span class="val">${l.et}</span></div>
+    </div>
+    <div class="block">
+      <div class="block-title">Économique</div>
+      <div class="row"><span class="label">Prix de cession</span><span class="val">${l.pr.toLocaleString('fr-FR')} €</span></div>
+      <div class="row"><span class="label">Loyer annuel</span><span class="val">${l.lo.toLocaleString('fr-FR')} €</span></div>
+      <div class="row"><span class="label">Bail</span><span class="val">3/6/9 commercial</span></div>
+      <div class="row"><span class="label">Loyer/m²</span><span class="val">${Math.round(l.lo/l.st)} €/m²/an</span></div>
+    </div>
+  </div>
+  <div class="block" style="margin-bottom:1rem;">
+    <div class="block-title">Environnement</div>
+    <p style="font-size:12px;color:#6b6860;margin:0;">${l.en}</p>
+  </div>
+  <div class="block" style="margin-bottom:1rem;">
+    <div class="block-title">Description</div>
+    <p style="font-size:12px;color:#6b6860;margin:0;">${l.de}</p>
+  </div>
+  ${reasons.length ? `<div style="margin-bottom:1rem;"><div class="block-title" style="font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:#6b6860;margin-bottom:6px;">Arguments de vente</div>${reasons.map(r=>`<div class="point green">${r}</div>`).join('')}</div>` : ''}
+  ${alerts.length ? `<div style="margin-bottom:1rem;"><div class="block-title" style="font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:#6b6860;margin-bottom:6px;">Points de vigilance</div>${alerts.map(a=>`<div class="point amber">${a}</div>`).join('')}</div>` : ''}
+  <div class="block">
+    <div class="block-title">Concepts adaptés</div>
+    <p style="font-size:12px;color:#6b6860;margin:0;">${l.co}</p>
+  </div>
+  <script>window.onload = () => { window.print(); }<\/script>
+  </body></html>`);
+  printWin.document.close();
+}
+
+// ===== VOCAL =====
+let recognition = null;
+let isListening = false;
+
+function initVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('voice-unsupported').style.display = 'block';
+    document.getElementById('mic-btn').style.opacity = '0.3';
+    document.getElementById('mic-btn').style.cursor = 'not-allowed';
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = 'fr-FR';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  let finalTranscript = '';
+
+  recognition.onstart = () => {
+    isListening = true;
+    finalTranscript = document.getElementById('sinput').value;
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('voice-status').classList.add('on');
+    document.getElementById('shint').style.display = 'none';
+    document.getElementById('voice-txt').textContent = 'En écoute… parlez maintenant';
+  };
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        finalTranscript += e.results[i][0].transcript + ' ';
+      } else {
+        interim = e.results[i][0].transcript;
+      }
+    }
+    document.getElementById('sinput').value = finalTranscript + interim;
+    document.getElementById('voice-txt').textContent = interim ? `"${interim.slice(0,40)}…"` : 'En écoute…';
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    document.getElementById('mic-btn').classList.remove('listening');
+    document.getElementById('voice-status').classList.remove('on');
+    document.getElementById('shint').style.display = '';
+    const txt = document.getElementById('sinput').value.trim();
+    if (txt.length > 20) {
+      document.getElementById('voice-txt').textContent = 'En écoute…';
+      setTimeout(() => doSearch(), 400);
+    }
+  };
+
+  recognition.onerror = (e) => {
+    isListening = false;
+    document.getElementById('mic-btn').classList.remove('listening');
+    document.getElementById('voice-status').classList.remove('on');
+    document.getElementById('shint').style.display = '';
+    if (e.error === 'not-allowed') toast('Autorisez l\'accès au micro dans votre navigateur');
+    else if (e.error !== 'no-speech') toast('Erreur micro : ' + e.error);
+  };
+}
+
+function toggleVoice() {
+  if (!recognition) { toast('Micro non disponible sur ce navigateur'); return; }
+  if (isListening) {
+    recognition.stop();
+  } else {
+    document.getElementById('sinput').value = '';
+    recognition.start();
+  }
+}
+
+initVoice();
 initPills();
 initListings();
 </script>
