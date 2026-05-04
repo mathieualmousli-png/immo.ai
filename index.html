@@ -155,6 +155,57 @@ nav { display: flex; align-items: center; padding: 0 1.5rem; height: 54px; borde
 .toast.on { display: block; }
 
 .listings-stack { display: flex; flex-direction: column; gap: 7px; }
+
+/* PAGE AJOUTER */
+.form-section { margin-bottom: 1.75rem; }
+.form-section-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gris-texte); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--gris-border); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 580px) { .form-grid { grid-template-columns: 1fr; } }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+@media (max-width: 580px) { .form-grid-3 { grid-template-columns: 1fr 1fr; } }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 12px; color: var(--gris-texte); }
+.field input, .field select, .field textarea { border: 1px solid var(--gris-border); border-radius: var(--r); padding: 7px 10px; font-size: 13px; font-family: inherit; color: var(--noir); background: var(--blanc); transition: border-color 0.12s; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--noir); }
+.field textarea { resize: vertical; min-height: 70px; }
+.toggle-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--gris-border); border-radius: var(--r); cursor: pointer; transition: all 0.12s; }
+.toggle-row:hover { border-color: var(--noir); }
+.toggle-row.active { border-color: var(--vert); background: var(--vert-clair); }
+.toggle-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--gris-border); transition: all 0.12s; }
+.toggle-row.active .toggle-dot { background: var(--vert); border-color: var(--vert); }
+.toggle-label { font-size: 13px; font-weight: 500; }
+.toggle-row.active .toggle-label { color: var(--vert); }
+
+/* UPLOAD ZONE */
+.upload-zone { border: 2px dashed var(--gris-border); border-radius: var(--rlg); padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.12s; background: var(--blanc); }
+.upload-zone:hover { border-color: var(--noir); background: var(--gris-bg); }
+.upload-zone.dragover { border-color: var(--or); background: var(--or-clair); }
+.upload-icon { font-size: 28px; margin-bottom: 8px; }
+.upload-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.upload-sub { font-size: 12px; color: var(--gris-texte); }
+.upload-input { display: none; }
+.files-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.file-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--gris-bg); border-radius: var(--r); font-size: 12px; }
+.file-icon { font-size: 14px; }
+.file-name { flex: 1; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-size { color: var(--gris-texte); }
+.file-rm { cursor: pointer; color: var(--gris-texte); font-size: 14px; padding: 0 4px; }
+.file-rm:hover { color: var(--rouge); }
+
+/* AUDIT OUTPUT */
+.audit-box { background: var(--gris-bg); border-radius: var(--rlg); padding: 1.25rem; margin-top: 1.5rem; }
+.audit-header { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+.audit-title { font-family: 'DM Serif Display', serif; font-size: 18px; }
+.audit-section { margin-bottom: 1rem; }
+.audit-section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris-texte); margin-bottom: 6px; }
+.audit-text { font-size: 13px; color: var(--gris-texte); line-height: 1.65; }
+.audit-points { display: flex; flex-direction: column; gap: 5px; }
+.audit-point { font-size: 13px; padding: 7px 12px; border-radius: var(--r); line-height: 1.5; }
+.ap-green { background: var(--vert-clair); color: #1a4a35; border-left: 3px solid var(--vert); }
+.ap-amber { background: var(--ambre-clair); color: var(--ambre); border-left: 3px solid var(--or); }
+.ap-red { background: var(--rouge-clair); color: var(--rouge); border-left: 3px solid var(--rouge); }
+.btn-outline { background: transparent; color: var(--noir); border: 1px solid var(--gris-border); }
+.btn-outline:hover { border-color: var(--noir); background: var(--gris-bg); }
 </style>
 </head>
 <body>
@@ -165,6 +216,7 @@ nav { display: flex; align-items: center; padding: 0 1.5rem; height: 54px; borde
   <div class="nav-tabs">
     <button class="ntab on" onclick="goPage('match',this)">Matching</button>
     <button class="ntab" onclick="goPage('annonces',this)">Annonces (50)</button>
+    <button class="ntab" onclick="goPage('ajouter',this)">+ Ajouter</button>
   </div>
 </nav>
 
@@ -214,6 +266,155 @@ nav { display: flex; align-items: center; padding: 0 1.5rem; height: 54px; borde
     <div class="sec-count">50 fonds de commerce · Paris</div>
   </div>
   <div class="listings-stack" id="all-list"></div>
+</div>
+
+<!-- PAGE AJOUTER UNE ANNONCE -->
+<div class="page" id="page-ajouter">
+
+  <div id="view-form">
+    <div style="padding: 2rem 0 1rem;">
+      <div style="font-family:'DM Serif Display',serif; font-size:26px; margin-bottom:4px;">Ajouter une annonce</div>
+      <div style="font-size:13px; color:var(--gris-texte);">Remplissez la fiche — l'IA génère l'audit automatiquement</div>
+    </div>
+
+    <!-- IDENTIFICATION -->
+    <div class="form-section">
+      <div class="form-section-title">Identification</div>
+      <div class="form-grid">
+        <div class="field"><label>Titre de l'annonce *</label><input type="text" id="f-titre" placeholder="Ex : Restaurant terrasse Montorgueil" /></div>
+        <div class="field"><label>Agent responsable</label><input type="text" id="f-agent" placeholder="Nom de l'agent" /></div>
+        <div class="field"><label>Arrondissement *</label>
+          <select id="f-arr">
+            <option value="">Sélectionner</option>
+            ${[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].map(n=>`<option value="${n}">Paris ${n}e</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label>Quartier / rue</label><input type="text" id="f-quartier" placeholder="Ex : Montorgueil, Bastille…" /></div>
+      </div>
+    </div>
+
+    <!-- SURFACES -->
+    <div class="form-section">
+      <div class="form-section-title">Surfaces & capacité</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Surface RDC (m²) *</label><input type="number" id="f-srdc" placeholder="120" /></div>
+        <div class="field"><label>Surface totale (m²) *</label><input type="number" id="f-stot" placeholder="150" /></div>
+        <div class="field"><label>Couverts intérieur</label><input type="number" id="f-int" placeholder="50" /></div>
+        <div class="field"><label>Places terrasse</label><input type="number" id="f-terr" placeholder="20" /></div>
+        <div class="field"><label>Façade (ml)</label><input type="number" id="f-facade" placeholder="7.5" step="0.1" /></div>
+      </div>
+    </div>
+
+    <!-- TECHNIQUE -->
+    <div class="form-section">
+      <div class="form-section-title">Caractéristiques techniques</div>
+      <div class="form-grid-3" style="margin-bottom:10px;">
+        <div class="toggle-row" id="tog-ext" onclick="toggle('ext')">
+          <div class="toggle-dot" id="dot-ext"></div>
+          <span class="toggle-label">Extraction</span>
+        </div>
+        <div class="toggle-row" id="tog-l4" onclick="toggle('l4')">
+          <div class="toggle-dot" id="dot-l4"></div>
+          <span class="toggle-label">Licence IV</span>
+        </div>
+        <div class="toggle-row" id="tog-angle" onclick="toggle('angle')">
+          <div class="toggle-dot" id="dot-angle"></div>
+          <span class="toggle-label">Angle</span>
+        </div>
+        <div class="toggle-row" id="tog-gaz" onclick="toggle('gaz')">
+          <div class="toggle-dot" id="dot-gaz"></div>
+          <span class="toggle-label">Gaz</span>
+        </div>
+        <div class="toggle-row" id="tog-cave" onclick="toggle('cave')">
+          <div class="toggle-dot" id="dot-cave"></div>
+          <span class="toggle-label">Cave</span>
+        </div>
+        <div class="toggle-row" id="tog-tri" onclick="toggle('tri')">
+          <div class="toggle-dot" id="dot-tri"></div>
+          <span class="toggle-label">Triphasé</span>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Puissance électrique (kVA)</label><input type="number" id="f-kva" placeholder="24" /></div>
+        <div class="field"><label>État du local</label>
+          <select id="f-etat">
+            <option value="très bon">Très bon état</option>
+            <option value="bon" selected>Bon état</option>
+            <option value="correct">Correct</option>
+            <option value="à rénover">À rénover</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÉCONOMIQUE -->
+    <div class="form-section">
+      <div class="form-section-title">Données économiques</div>
+      <div class="form-grid">
+        <div class="field"><label>Prix de cession (€) *</label><input type="number" id="f-prix" placeholder="550000" /></div>
+        <div class="field"><label>Loyer annuel (€/an) *</label><input type="number" id="f-loyer" placeholder="72000" /></div>
+        <div class="field"><label>Charges annuelles (€)</label><input type="number" id="f-charges" placeholder="6000" /></div>
+        <div class="field"><label>Type de bail</label>
+          <select id="f-bail">
+            <option value="3/6/9">3/6/9 commercial</option>
+            <option value="précaire">Précaire</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div class="field"><label>CA annuel déclaré (€)</label><input type="number" id="f-ca" placeholder="Si disponible" /></div>
+        <div class="field"><label>EBE (€)</label><input type="number" id="f-ebe" placeholder="Si disponible" /></div>
+      </div>
+    </div>
+
+    <!-- ENVIRONNEMENT -->
+    <div class="form-section">
+      <div class="form-section-title">Environnement & description</div>
+      <div class="form-grid" style="margin-bottom:10px;">
+        <div class="field"><label>Environnement commercial</label><input type="text" id="f-env" placeholder="Ex : Bureaux, tourisme, résidentiel CSP+…" /></div>
+        <div class="field"><label>Flux estimé</label>
+          <select id="f-flux">
+            <option value="midi fort">Midi fort</option>
+            <option value="soir fort">Soir fort</option>
+            <option value="midi + soir">Midi + soir</option>
+            <option value="journée continu">Journée continue</option>
+            <option value="week-end">Week-end principalement</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Description libre</label><textarea id="f-desc" placeholder="Points forts, configuration, histoire du local, remarques agent…"></textarea></div>
+    </div>
+
+    <!-- UPLOAD DOCUMENTS -->
+    <div class="form-section">
+      <div class="form-section-title">Documents (bail, bilans, plan, quittances…)</div>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFiles(event)">
+        <div class="upload-icon">📎</div>
+        <div class="upload-title">Glissez vos documents ici</div>
+        <div class="upload-sub">ou cliquez pour sélectionner · PDF, images · max 10 Mo/fichier</div>
+        <input class="upload-input" type="file" id="file-input" multiple accept=".pdf,.png,.jpg,.jpeg" onchange="addFiles(this.files)" />
+      </div>
+      <div class="files-list" id="files-list"></div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap; padding-bottom:2rem;">
+      <button class="btn btn-dark" onclick="generateAudit()">Générer l'audit IA →</button>
+      <button class="btn btn-outline" onclick="saveAnnonce()">Enregistrer sans audit</button>
+    </div>
+
+    <div class="loader" id="loader-audit"><div class="spin"></div><span id="ltxt-audit">Analyse des documents en cours…</span></div>
+  </div>
+
+  <!-- AUDIT RESULT -->
+  <div id="view-audit" style="display:none;">
+    <button class="back" onclick="backToForm()">← Modifier la fiche</button>
+    <div class="audit-box" id="audit-content"></div>
+    <div style="display:flex; gap:10px; margin-top:1.25rem; padding-bottom:2rem;">
+      <button class="btn btn-dark" onclick="confirmSave()">Ajouter à la base d'annonces ✓</button>
+      <button class="btn btn-outline" onclick="backToForm()">Modifier</button>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -562,6 +763,260 @@ function toast(msg) {
 document.getElementById('sinput').addEventListener('keydown', e => {
   if (e.key==='Enter' && (e.metaKey||e.ctrlKey)) doSearch();
 });
+
+// ===== PAGE AJOUTER =====
+const toggleState = { ext:false, l4:false, angle:false, gaz:false, cave:false, tri:false };
+function toggle(key) {
+  toggleState[key] = !toggleState[key];
+  document.getElementById('tog-'+key).classList.toggle('active', toggleState[key]);
+  document.getElementById('dot-'+key).style.background = toggleState[key] ? 'var(--vert)' : '';
+}
+
+let uploadedFiles = [];
+function addFiles(fileList) {
+  Array.from(fileList).forEach(f => {
+    if (!uploadedFiles.find(x => x.name === f.name)) uploadedFiles.push(f);
+  });
+  renderFiles();
+}
+function renderFiles() {
+  const el = document.getElementById('files-list');
+  el.innerHTML = uploadedFiles.map((f,i) => {
+    const icon = f.type.includes('pdf') ? '📄' : '🖼️';
+    const size = f.size > 1024*1024 ? (f.size/1024/1024).toFixed(1)+'Mo' : Math.round(f.size/1024)+'Ko';
+    return `<div class="file-item">
+      <span class="file-icon">${icon}</span>
+      <span class="file-name">${f.name}</span>
+      <span class="file-size">${size}</span>
+      <span class="file-rm" onclick="removeFile(${i})">✕</span>
+    </div>`;
+  }).join('');
+}
+function removeFile(i) { uploadedFiles.splice(i,1); renderFiles(); }
+function dragOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('dragover'); }
+function dragLeave(e) { document.getElementById('upload-zone').classList.remove('dragover'); }
+function dropFiles(e) { e.preventDefault(); dragLeave(e); addFiles(e.dataTransfer.files); }
+
+function getFormData() {
+  return {
+    titre: document.getElementById('f-titre').value.trim(),
+    agent: document.getElementById('f-agent').value.trim(),
+    arr: parseInt(document.getElementById('f-arr').value) || 0,
+    quartier: document.getElementById('f-quartier').value.trim(),
+    srdc: parseFloat(document.getElementById('f-srdc').value) || 0,
+    stot: parseFloat(document.getElementById('f-stot').value) || 0,
+    int: parseInt(document.getElementById('f-int').value) || 0,
+    terr: parseInt(document.getElementById('f-terr').value) || 0,
+    facade: parseFloat(document.getElementById('f-facade').value) || 0,
+    ext: toggleState.ext, l4: toggleState.l4, angle: toggleState.angle,
+    gaz: toggleState.gaz, cave: toggleState.cave, tri: toggleState.tri,
+    kva: parseInt(document.getElementById('f-kva').value) || 0,
+    etat: document.getElementById('f-etat').value,
+    prix: parseInt(document.getElementById('f-prix').value) || 0,
+    loyer: parseInt(document.getElementById('f-loyer').value) || 0,
+    charges: parseInt(document.getElementById('f-charges').value) || 0,
+    bail: document.getElementById('f-bail').value,
+    ca: parseInt(document.getElementById('f-ca').value) || 0,
+    ebe: parseInt(document.getElementById('f-ebe').value) || 0,
+    env: document.getElementById('f-env').value.trim(),
+    flux: document.getElementById('f-flux').value,
+    desc: document.getElementById('f-desc').value.trim(),
+    files: uploadedFiles.map(f => f.name)
+  };
+}
+
+async function generateAudit() {
+  const d = getFormData();
+  if (!d.titre || !d.arr || !d.stot || !d.prix || !d.loyer) {
+    toast('Remplissez au minimum : titre, arrondissement, surface, prix et loyer');
+    return;
+  }
+  document.getElementById('loader-audit').classList.add('on');
+  document.getElementById('ltxt-audit').textContent = 'Génération de l\'audit IA…';
+
+  const ficheTexte = `
+ANNONCE : ${d.titre}
+Localisation : Paris ${d.arr}e — ${d.quartier}
+Surface RDC : ${d.srdc} m² | Surface totale : ${d.stot} m²
+Couverts intérieur : ${d.int} | Terrasse : ${d.terr} places
+Façade : ${d.facade} ml | Angle : ${d.angle ? 'Oui' : 'Non'}
+Extraction : ${d.ext ? 'Oui' : 'Non'} | Licence IV : ${d.l4 ? 'Oui' : 'Non'}
+Gaz : ${d.gaz ? 'Oui' : 'Non'} | Cave : ${d.cave ? 'Oui' : 'Non'} | Triphasé : ${d.tri ? 'Oui' : 'Non'}
+Puissance : ${d.kva} kVA | État : ${d.etat}
+Prix de cession : ${d.prix.toLocaleString('fr-FR')} €
+Loyer annuel : ${d.loyer.toLocaleString('fr-FR')} € | Charges : ${d.charges.toLocaleString('fr-FR')} €
+Bail : ${d.bail}
+${d.ca ? 'CA annuel : '+d.ca.toLocaleString('fr-FR')+' €' : ''}
+${d.ebe ? 'EBE : '+d.ebe.toLocaleString('fr-FR')+' €' : ''}
+Environnement : ${d.env}
+Flux : ${d.flux}
+Description : ${d.desc}
+Documents disponibles : ${d.files.length ? d.files.join(', ') : 'Aucun'}
+  `.trim();
+
+  let auditData = null;
+  if (apiKey) {
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+        body: JSON.stringify({
+          model:'claude-sonnet-4-20250514', max_tokens:1200,
+          system:`Tu es un expert immobilier CHR (café, hôtel, restaurant) à Paris. À partir d'une fiche annonce, génère un audit structuré. Réponds UNIQUEMENT en JSON valide sans markdown.
+Format : {
+  "resume": "2-3 phrases résumant le local et son potentiel",
+  "forces": ["force 1", "force 2", "force 3"],
+  "vigilances": ["point de vigilance 1", "point de vigilance 2"],
+  "alertes": ["alerte critique si applicable"],
+  "concepts": ["concept adapté 1", "concept adapté 2", "concept adapté 3"],
+  "profils_acheteurs": "Description des profils idéaux pour ce local",
+  "questions_avant_visite": ["question 1", "question 2", "question 3"],
+  "ratio_loyer": "analyse du ratio loyer/surface et cohérence prix marché"
+}`,
+          messages:[{role:'user', content: ficheTexte}]
+        })
+      });
+      const data = await res.json();
+      const raw = data.content?.[0]?.text || '';
+      auditData = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    } catch(e) { auditData = null; }
+  }
+
+  document.getElementById('loader-audit').classList.remove('on');
+  renderAudit(d, auditData);
+}
+
+function renderAudit(d, ai) {
+  const fallbackForces = [
+    d.ext ? 'Extraction présente' : null,
+    d.terr > 0 ? `Terrasse ${d.terr} places` : null,
+    d.l4 ? 'Licence IV en place' : null,
+    d.angle ? 'Configuration en angle' : null,
+    d.facade >= 7 ? `Grande façade (${d.facade} ml)` : null,
+    d.etat === 'très bon' ? 'Local en très bon état' : null,
+  ].filter(Boolean);
+
+  const fallbackVigilances = [
+    !d.ext ? 'Pas d\'extraction — usage restauration limité' : null,
+    d.loyer > 0 && d.stot > 0 && (d.loyer/d.stot) > 700 ? 'Ratio loyer/m² élevé' : null,
+    d.etat === 'à rénover' ? 'Travaux importants à prévoir' : null,
+  ].filter(Boolean);
+
+  const forces = ai ? ai.forces : fallbackForces;
+  const vigilances = ai ? ai.vigilances : fallbackVigilances;
+  const alertes = ai ? (ai.alertes || []) : [];
+  const concepts = ai ? ai.concepts : ['À définir selon le projet'];
+  const resume = ai ? ai.resume : `Local de ${d.stot} m² à Paris ${d.arr}e, prix ${d.prix.toLocaleString('fr-FR')} €, loyer ${d.loyer.toLocaleString('fr-FR')} €/an.`;
+
+  document.getElementById('audit-content').innerHTML = `
+    <div class="audit-header">
+      <div class="audit-title">${d.titre}</div>
+      <span class="ai-tag">${ai ? 'Audit IA' : 'Audit auto'}</span>
+    </div>
+
+    <div class="audit-section">
+      <div class="audit-section-label">Synthèse</div>
+      <div class="audit-text">${resume}</div>
+    </div>
+
+    ${forces.length ? `<div class="audit-section">
+      <div class="audit-section-label">Points forts</div>
+      <div class="audit-points">${forces.map(f=>`<div class="audit-point ap-green">${f}</div>`).join('')}</div>
+    </div>` : ''}
+
+    ${vigilances.length ? `<div class="audit-section">
+      <div class="audit-section-label">Points de vigilance</div>
+      <div class="audit-points">${vigilances.map(v=>`<div class="audit-point ap-amber">${v}</div>`).join('')}</div>
+    </div>` : ''}
+
+    ${alertes.length ? `<div class="audit-section">
+      <div class="audit-section-label">Alertes</div>
+      <div class="audit-points">${alertes.map(a=>`<div class="audit-point ap-red">${a}</div>`).join('')}</div>
+    </div>` : ''}
+
+    <div class="audit-section">
+      <div class="audit-section-label">Concepts adaptés</div>
+      <div class="audit-text">${concepts.join(' · ')}</div>
+    </div>
+
+    ${ai && ai.profils_acheteurs ? `<div class="audit-section">
+      <div class="audit-section-label">Profils acheteurs idéaux</div>
+      <div class="audit-text">${ai.profils_acheteurs}</div>
+    </div>` : ''}
+
+    ${ai && ai.questions_avant_visite ? `<div class="audit-section">
+      <div class="audit-section-label">Questions à poser avant visite</div>
+      <div class="audit-points">${ai.questions_avant_visite.map(q=>`<div class="audit-point ap-amber">${q}</div>`).join('')}</div>
+    </div>` : ''}
+
+    ${ai && ai.ratio_loyer ? `<div class="audit-section">
+      <div class="audit-section-label">Analyse économique</div>
+      <div class="audit-text">${ai.ratio_loyer}</div>
+    </div>` : ''}
+
+    <div class="audit-section" style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--gris-border);">
+      <div class="audit-section-label">Données de la fiche</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px 1rem;">
+        <div class="drow"><span class="dk">Arrondissement</span><span class="dv">Paris ${d.arr}e</span></div>
+        <div class="drow"><span class="dk">Surface</span><span class="dv">${d.stot} m²</span></div>
+        <div class="drow"><span class="dk">Couverts</span><span class="dv">${d.int || '—'}</span></div>
+        <div class="drow"><span class="dk">Terrasse</span><span class="dv">${d.terr > 0 ? d.terr+' pl.' : 'Aucune'}</span></div>
+        <div class="drow"><span class="dk">Prix cession</span><span class="dv">${d.prix.toLocaleString('fr-FR')} €</span></div>
+        <div class="drow"><span class="dk">Loyer/an</span><span class="dv">${d.loyer.toLocaleString('fr-FR')} €</span></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('view-form').style.display = 'none';
+  document.getElementById('view-audit').style.display = 'block';
+  window.scrollTo(0,0);
+  window._lastAuditData = { formData: d, aiData: ai };
+}
+
+function backToForm() {
+  document.getElementById('view-form').style.display = 'block';
+  document.getElementById('view-audit').style.display = 'none';
+}
+
+function confirmSave() {
+  const d = window._lastAuditData?.formData;
+  if (!d) return;
+  const newId = 'N' + String(L.length + 1).padStart(3,'0');
+  const ai = window._lastAuditData?.aiData;
+  L.push({
+    id: newId, t: d.titre, a: d.arr, q: d.quartier || '',
+    sr: d.srdc, st: d.stot, ex: d.ext, l4: d.l4, te: d.terr, ip: d.int,
+    fa: d.facade, ag: d.angle, lo: d.loyer, pr: d.prix, et: d.etat,
+    en: d.env, de: d.desc || (ai ? ai.resume : ''),
+    co: ai ? ai.concepts.join(', ') : ''
+  });
+  initListings();
+  toast(`Annonce "${d.titre}" ajoutée ✓`);
+  resetForm();
+  goPage('annonces', document.querySelectorAll('.ntab')[1]);
+}
+
+function saveAnnonce() {
+  const d = getFormData();
+  if (!d.titre || !d.arr) { toast('Remplissez au minimum le titre et l\'arrondissement'); return; }
+  window._lastAuditData = { formData: d, aiData: null };
+  confirmSave();
+}
+
+function resetForm() {
+  ['f-titre','f-agent','f-quartier','f-srdc','f-stot','f-int','f-terr','f-facade',
+   'f-kva','f-prix','f-loyer','f-charges','f-ca','f-ebe','f-env','f-desc'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  Object.keys(toggleState).forEach(k => {
+    toggleState[k] = false;
+    document.getElementById('tog-'+k)?.classList.remove('active');
+  });
+  uploadedFiles = [];
+  renderFiles();
+  document.getElementById('view-form').style.display = 'block';
+  document.getElementById('view-audit').style.display = 'none';
+}
 
 initPills();
 initListings();
