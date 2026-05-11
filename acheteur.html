@@ -3,1142 +3,798 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>FondsMatch — Trouvez votre commerce</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>FondsMatch — Trouvez votre commerce à Paris</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --noir: #0d0d0d;
-  --blanc: #faf9f6;
-  --creme: #f2efe8;
-  --creme2: #e8e3d8;
-  --or: #c9a84c;
-  --or2: #e8c96a;
-  --or-clair: #faf3e0;
-  --vert: #2a6148;
-  --vert-clair: #e4f0ea;
-  --rouge: #c0392b;
-  --rouge-clair: #faeae8;
-  --gris: #7a7570;
-  --r: 8px;
-  --rlg: 18px;
-  --rxl: 28px;
+  --noir: #0d0d0d; --blanc: #faf9f6; --creme: #f2efe8; --creme2: #e4e0d8;
+  --or: #c9a84c; --or-clair: #faf3e0; --vert: #2a6148; --vert-clair: #e4f0ea;
+  --rouge: #c0392b; --rouge-clair: #faeae8; --ambre: #8a6520; --gris: #7a7570;
+  --r: 8px; --rlg: 18px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { height: 100%; height: -webkit-fill-available; }
-body { height: 100%; min-height: 100vh; min-height: -webkit-fill-available; overflow: hidden; font-family: 'DM Sans', sans-serif; background: var(--blanc); color: var(--noir); font-size: 15px; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:#1a1a1a;color:var(--noir);font-size:15px}
 
-/* APP SHELL */
-.app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; background: var(--blanc); position: relative; overflow: hidden; }
+/* SHELL */
+.shell{height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center;background:#1a1a1a}
+.app{width:100%;max-width:420px;height:100%;max-height:100%;background:var(--blanc);position:relative;overflow:hidden;display:flex;flex-direction:column}
+@media(min-width:500px){
+  .app{height:90vh;max-height:820px;border-radius:36px;box-shadow:0 40px 80px rgba(0,0,0,0.6)}
+}
 
 /* VIEWS */
-.view { position: absolute; inset: 0; display: flex; flex-direction: column; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s; }
-.view.hidden { transform: translateX(100%); opacity: 0; pointer-events: none; }
-.view.hidden-left { transform: translateX(-40%); opacity: 0; pointer-events: none; }
+.view{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--blanc);transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s;z-index:1}
+.view.hidden{transform:translateX(100%);opacity:0;pointer-events:none}
+.view.slide-left{transform:translateX(-30%);opacity:0;pointer-events:none}
 
-/* SPLASH */
-#v-splash { background: var(--noir); align-items: center; justify-content: center; gap: 0; }
-.splash-logo { font-family: 'Playfair Display', serif; font-size: 38px; color: var(--blanc); letter-spacing: -0.02em; margin-bottom: 6px; }
-.splash-logo span { color: var(--or); font-style: italic; }
-.splash-sub { font-size: 13px; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; margin-bottom: 48px; }
-.splash-btn { background: var(--or); color: var(--noir); border: none; border-radius: 40px; padding: 14px 40px; font-size: 15px; font-weight: 500; font-family: inherit; cursor: pointer; transition: transform 0.15s; }
-.splash-btn:active { transform: scale(0.97); }
-.splash-dots { display: flex; gap: 6px; margin-top: 24px; }
-.splash-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); }
-.splash-dot.on { background: var(--or); width: 16px; border-radius: 3px; transition: width 0.3s; }
+/* ===== SPLASH ===== */
+#v-splash{background:var(--noir);align-items:center;justify-content:center;gap:0;z-index:10}
+.sp-logo{font-family:'Playfair Display',serif;font-size:42px;color:var(--blanc);letter-spacing:-.02em;margin-bottom:8px}
+.sp-logo em{color:var(--or);font-style:italic}
+.sp-sub{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:52px}
+.sp-btn{background:var(--or);color:var(--noir);border:none;border-radius:40px;padding:15px 44px;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;transition:opacity .15s}
+.sp-btn:hover{opacity:.88}
 
-/* CHAT VIEW */
-#v-chat { background: var(--blanc); }
-.chat-header { padding: 16px 20px 12px; display: flex; align-items: center; gap: 12px; border-bottom: 0.5px solid var(--creme2); flex-shrink: 0; }
-.chat-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--noir); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.chat-avatar svg { width: 18px; height: 18px; }
-.chat-title { font-size: 14px; font-weight: 500; }
-.chat-status { font-size: 11px; color: var(--vert); }
-.chat-messages { flex: 1; overflow-y: auto; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
-.msg { max-width: 82%; animation: msgIn 0.25s ease; }
-@keyframes msgIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-.msg-ai { align-self: flex-start; }
-.msg-user { align-self: flex-end; }
-.msg-bubble { padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 1.55; }
-.msg-ai .msg-bubble { background: var(--creme); color: var(--noir); border-bottom-left-radius: 4px; }
-.msg-user .msg-bubble { background: var(--noir); color: var(--blanc); border-bottom-right-radius: 4px; }
-.msg-time { font-size: 10px; color: var(--gris); margin-top: 3px; padding: 0 4px; }
-.msg-ai .msg-time { text-align: left; }
-.msg-user .msg-time { text-align: right; }
-.typing { display: flex; gap: 4px; padding: 12px 16px; align-items: center; }
-.typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gris); animation: typingBounce 1.2s infinite; }
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes typingBounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
-.chat-input-area { padding: 10px 14px; padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)); border-top: 0.5px solid var(--creme2); background: var(--blanc); flex-shrink: 0; }
-.chat-input-row { display: flex; align-items: flex-end; gap: 8px; background: var(--creme); border-radius: 24px; padding: 8px 8px 8px 14px; }
-.chat-textarea { flex: 1; border: none; outline: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--noir); resize: none; max-height: 80px; line-height: 1.4; }
-.chat-textarea::placeholder { color: var(--gris); }
-.mic-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--blanc); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
-.mic-btn.on { background: var(--rouge); animation: pulse 1.2s infinite; }
-.mic-btn svg { width: 16px; height: 16px; }
-@keyframes pulse { 0%,100% { box-shadow:0 0 0 0 rgba(192,57,43,0.4); } 50% { box-shadow:0 0 0 8px rgba(192,57,43,0); } }
-.send-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--noir); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.15s; }
-.send-btn:active { transform: scale(0.92); }
-.send-btn svg { width: 16px; height: 16px; }
-.chat-progress { display: flex; gap: 4px; margin-bottom: 8px; justify-content: center; }
-.cp { height: 3px; flex: 1; border-radius: 3px; background: var(--creme2); transition: background 0.3s; }
-.cp.done { background: var(--or); }
+/* ===== CHAT ===== */
+#v-chat{background:var(--blanc)}
+.chat-hd{padding:14px 18px 10px;display:flex;align-items:center;gap:10px;border-bottom:.5px solid var(--creme2);flex-shrink:0}
+.chat-av{width:34px;height:34px;border-radius:50%;background:var(--noir);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-av svg{width:16px;height:16px}
+.chat-name{font-size:13px;font-weight:500}
+.chat-online{font-size:11px;color:var(--vert)}
+.chat-prog{display:flex;gap:4px;padding:8px 18px 0;flex-shrink:0}
+.cp{height:3px;flex:1;border-radius:3px;background:var(--creme2);transition:background .3s}
+.cp.done{background:var(--or)}
+.chat-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 8px;display:flex;flex-direction:column;gap:9px}
+.msg{max-width:84%;animation:fadeUp .22s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg-ai{align-self:flex-start}
+.msg-user{align-self:flex-end}
+.bubble{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.55}
+.msg-ai .bubble{background:var(--creme);border-bottom-left-radius:4px}
+.msg-user .bubble{background:var(--noir);color:#fff;border-bottom-right-radius:4px}
+.msg-t{font-size:10px;color:var(--gris);margin-top:3px;padding:0 4px}
+.msg-ai .msg-t{text-align:left}.msg-user .msg-t{text-align:right}
+.typing{display:flex;gap:4px;padding:10px 14px;align-items:center}
+.td{width:7px;height:7px;border-radius:50%;background:var(--gris);animation:tb 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes tb{0%,60%,100%{transform:none}30%{transform:translateY(-5px)}}
+.chat-inp{padding:10px 14px;padding-bottom:max(14px,env(safe-area-inset-bottom,14px));border-top:.5px solid var(--creme2);flex-shrink:0}
+.inp-row{display:flex;align-items:flex-end;gap:8px;background:var(--creme);border-radius:22px;padding:8px 8px 8px 14px}
+.inp-ta{flex:1;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--noir);background:transparent;resize:none;max-height:80px;line-height:1.4}
+.inp-ta::placeholder{color:var(--gris)}
+.mic-b{width:34px;height:34px;border-radius:50%;background:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.mic-b.on{background:var(--rouge);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.35)}50%{box-shadow:0 0 0 8px rgba(192,57,43,0)}}
+.send-b{width:34px;height:34px;border-radius:50%;background:var(--noir);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-/* PROFIL VIEW */
-#v-profil { background: var(--blanc); }
-.profil-header { padding: 16px 20px; border-bottom: 0.5px solid var(--creme2); }
-.profil-header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.back-btn { width: 34px; height: 34px; border-radius: 50%; border: 0.5px solid var(--creme2); background: var(--blanc); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.back-btn svg { width: 16px; height: 16px; }
-.profil-title { font-family: 'Playfair Display', serif; font-size: 20px; }
-.profil-sub { font-size: 12px; color: var(--gris); }
-.match-count-bar { background: var(--noir); color: var(--blanc); border-radius: var(--r); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
-.mcb-num { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--or); }
-.mcb-label { font-size: 12px; color: rgba(255,255,255,0.6); }
-.mcb-arrow { color: var(--or); font-size: 18px; }
-.profil-scroll { flex: 1; overflow-y: auto; padding: 16px; }
-.crit-section { margin-bottom: 16px; }
-.cs-title { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gris); margin-bottom: 8px; }
-.crit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.crit-card { background: var(--creme); border-radius: var(--r); padding: 9px 11px; }
-.crit-k { font-size: 10px; color: var(--gris); margin-bottom: 2px; }
-.crit-v { font-size: 13px; font-weight: 500; }
-.pill-g { display: inline-block; font-size: 11px; background: var(--vert-clair); color: var(--vert); padding: 1px 8px; border-radius: 20px; }
-.pill-gr { display: inline-block; font-size: 11px; background: var(--creme2); color: var(--gris); padding: 1px 8px; border-radius: 20px; }
-.rh-box { background: var(--rouge-clair); border-radius: var(--r); padding: 9px 12px; font-size: 12px; color: var(--rouge); line-height: 1.5; }
-.profil-cta { padding: 12px 16px 24px; }
-.big-btn { width: 100%; border: none; border-radius: 40px; padding: 14px; font-size: 15px; font-weight: 500; font-family: inherit; cursor: pointer; transition: transform 0.15s, opacity 0.15s; }
-.big-btn:active { transform: scale(0.98); }
-.btn-gold { background: var(--or); color: var(--noir); }
-.btn-dark { background: var(--noir); color: var(--blanc); }
-.btn-outline { background: transparent; color: var(--noir); border: 1px solid var(--creme2); }
+/* ===== PROFIL ===== */
+#v-profil{background:var(--blanc)}
+.profil-hd{padding:14px 18px;border-bottom:.5px solid var(--creme2);flex-shrink:0}
+.profil-hd-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.back-b{width:32px;height:32px;border-radius:50%;border:.5px solid var(--creme2);background:var(--blanc);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.profil-ttl{font-family:'Playfair Display',serif;font-size:19px}
+.profil-sub{font-size:12px;color:var(--gris)}
+.match-bar{background:var(--noir);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.mb-num{font-family:'Playfair Display',serif;font-size:24px;color:var(--or)}
+.mb-lbl{font-size:12px;color:rgba(255,255,255,.55)}
+.profil-scroll{flex:1;overflow-y:auto;padding:14px 16px}
+.cs{margin-bottom:14px}
+.cs-t{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--gris);margin-bottom:8px}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.cc{background:var(--creme);border-radius:var(--r);padding:8px 10px}
+.cc-k{font-size:10px;color:var(--gris);margin-bottom:2px}
+.cc-v{font-size:13px;font-weight:500}
+.pill-g{display:inline-block;font-size:11px;background:var(--vert-clair);color:var(--vert);padding:1px 8px;border-radius:20px}
+.pill-gr{display:inline-block;font-size:11px;background:var(--creme2);color:var(--gris);padding:1px 8px;border-radius:20px}
+.rh-box{background:var(--rouge-clair);border-radius:var(--r);padding:9px 12px;font-size:12px;color:var(--rouge);line-height:1.5}
+.profil-cta{padding:12px 16px 20px;padding-bottom:max(20px,env(safe-area-inset-bottom,20px));display:flex;flex-direction:column;gap:8px;flex-shrink:0}
 
-/* SWIPE VIEW */
-#v-swipe { background: var(--creme); }
-.swipe-header { padding: 14px 20px 10px; display: flex; align-items: center; justify-content: space-between; }
-.sh-logo { font-family: 'Playfair Display', serif; font-size: 16px; }
-.sh-logo span { color: var(--or); font-style: italic; }
-.sh-count { font-size: 12px; color: var(--gris); }
-.sh-filter { width: 34px; height: 34px; border-radius: 50%; border: 0.5px solid var(--creme2); background: var(--blanc); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.swipe-area { flex: 1; position: relative; padding: 0 16px; overflow: hidden; }
-.scard { position: absolute; left: 16px; right: 16px; border-radius: var(--rxl); background: var(--blanc); overflow: hidden; transform-origin: bottom center; cursor: grab; user-select: none; transition: box-shadow 0.2s; box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
-.scard:active { cursor: grabbing; }
-.scard-ghost { transform: scale(0.94) translateY(16px); opacity: 0.7; pointer-events: none; z-index: 0; }
-.scard-ghost2 { transform: scale(0.88) translateY(32px); opacity: 0.4; pointer-events: none; z-index: 0; }
-.scard-main { z-index: 10; }
-.scard-img { height: 180px; background: var(--creme2); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.scard-img-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #e8e3d8 0%, #d4cfc4 100%); }
-.scard-img-icon { position: relative; z-index: 1; }
-.scard-img-icon svg { width: 48px; height: 48px; opacity: 0.25; }
-.scard-score-badge { position: absolute; top: 12px; right: 12px; z-index: 2; background: var(--noir); color: var(--blanc); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
-.scard-score-badge span { color: var(--or); }
-.swipe-like-overlay { position: absolute; top: 20px; left: 20px; background: var(--vert); color: white; border-radius: 8px; padding: 4px 12px; font-size: 15px; font-weight: 500; opacity: 0; pointer-events: none; transform: rotate(-15deg); z-index: 20; transition: opacity 0.1s; }
-.swipe-nope-overlay { position: absolute; top: 20px; right: 20px; background: var(--rouge); color: white; border-radius: 8px; padding: 4px 12px; font-size: 15px; font-weight: 500; opacity: 0; pointer-events: none; transform: rotate(15deg); z-index: 20; transition: opacity 0.1s; }
-.scard-body { padding: 14px 16px; }
-.scard-name { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 3px; line-height: 1.25; }
-.scard-loc { font-size: 12px; color: var(--gris); margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
-.scard-loc svg { width: 12px; height: 12px; }
-.scard-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
-.stag { font-size: 11px; padding: 3px 9px; border-radius: 20px; }
-.stag-g { background: var(--vert-clair); color: var(--vert); }
-.stag-n { background: var(--creme); color: var(--gris); }
-.scard-nums { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-.snum { background: var(--creme); border-radius: var(--r); padding: 8px; text-align: center; }
-.snum-v { font-size: 14px; font-weight: 500; }
-.snum-k { font-size: 10px; color: var(--gris); }
-.swipe-actions { padding: 14px 16px 20px; display: flex; justify-content: center; align-items: center; gap: 14px; }
-.sa-btn { border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.15s; flex-shrink: 0; }
-.sa-btn:active { transform: scale(0.92); }
-.sa-pass { width: 52px; height: 52px; background: var(--blanc); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-.sa-pass svg { width: 24px; height: 24px; color: var(--rouge); }
-.sa-info { width: 42px; height: 42px; background: var(--blanc); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-.sa-info svg { width: 18px; height: 18px; color: var(--gris); }
-.sa-like { width: 62px; height: 62px; background: var(--noir); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
-.sa-like svg { width: 28px; height: 28px; color: var(--or); }
-.swipe-hint { font-size: 11px; color: var(--gris); text-align: center; padding-bottom: 4px; }
+/* ===== BUTTONS ===== */
+.btn{width:100%;border:none;border-radius:40px;padding:13px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:opacity .15s}
+.btn:hover{opacity:.88}
+.btn-gold{background:var(--or);color:var(--noir)}
+.btn-dark{background:var(--noir);color:#fff}
+.btn-out{background:transparent;color:var(--noir);border:1px solid var(--creme2)}
 
-/* DETAIL VIEW */
-#v-detail { background: var(--blanc); overflow-y: auto; }
-.det-hero { background: var(--creme); padding: 16px; }
-.det-back { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--gris); cursor: pointer; margin-bottom: 14px; background: none; border: none; font-family: inherit; }
-.det-back svg { width: 16px; height: 16px; }
-.det-score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.det-score-circle { width: 54px; height: 54px; border-radius: 50%; background: var(--vert-clair); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.det-score-n { font-size: 18px; font-weight: 500; color: var(--vert); line-height: 1; }
-.det-score-d { font-size: 9px; color: var(--vert); }
-.det-score-txt { font-size: 12px; color: var(--vert); font-weight: 500; }
-.det-name { font-family: 'Playfair Display', serif; font-size: 22px; line-height: 1.2; margin-bottom: 4px; }
-.det-loc { font-size: 13px; color: var(--gris); }
-.det-body { padding: 16px; }
-.det-section { margin-bottom: 18px; }
-.det-s-title { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gris); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 0.5px solid var(--creme2); }
-.det-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 13px; }
-.det-k { color: var(--gris); }
-.det-v { font-weight: 500; }
-.det-v-green { color: var(--vert); font-weight: 500; }
-.env-bar { background: var(--creme); border-radius: var(--r); padding: 10px 12px; margin-bottom: 6px; }
-.env-label { font-size: 11px; color: var(--gris); margin-bottom: 4px; }
-.env-val { font-size: 13px; font-weight: 500; }
-.env-meter { height: 4px; background: var(--creme2); border-radius: 4px; overflow: hidden; margin-top: 5px; }
-.env-fill { height: 4px; border-radius: 4px; background: var(--vert); }
-.match-point { padding: 8px 12px; border-radius: var(--r); margin-bottom: 5px; font-size: 13px; line-height: 1.5; }
-.mp-green { background: var(--vert-clair); color: var(--vert); border-left: 3px solid var(--vert); border-radius: 0 var(--r) var(--r) 0; }
-.mp-amber { background: var(--or-clair); color: #7a5a10; border-left: 3px solid var(--or); border-radius: 0 var(--r) var(--r) 0; }
-.det-cta { padding: 0 16px 32px; display: flex; flex-direction: column; gap: 8px; }
-.contact-btn { width: 100%; background: var(--or); color: var(--noir); border: none; border-radius: 40px; padding: 14px; font-size: 15px; font-weight: 500; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s; }
-.contact-btn:active { transform: scale(0.98); }
-.contact-btn svg { width: 18px; height: 18px; }
-.fav-btn { width: 100%; background: var(--blanc); color: var(--noir); border: 1px solid var(--creme2); border-radius: 40px; padding: 12px; font-size: 14px; font-family: inherit; cursor: pointer; }
+/* ===== VIEW TOGGLE ===== */
+.vtog{display:flex;gap:3px;background:var(--creme);border-radius:20px;padding:3px}
+.vt{border:none;background:none;padding:5px 11px;border-radius:16px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--gris);transition:all .12s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.vt svg{width:12px;height:12px;flex-shrink:0}
+.vt.on{background:#fff;color:var(--noir);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 
-/* CONTACT VIEW */
-#v-contact { background: var(--blanc); overflow-y: auto; }
-.contact-hero { background: var(--noir); padding: 40px 20px 32px; text-align: center; }
-.check-circle { width: 64px; height: 64px; border-radius: 50%; background: rgba(201,168,76,0.15); border: 2px solid var(--or); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-.check-circle svg { width: 30px; height: 30px; color: var(--or); }
-.contact-hero-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--blanc); margin-bottom: 6px; }
-.contact-hero-sub { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
-.contact-body { padding: 20px 16px; }
-.mail-card { background: var(--creme); border-radius: var(--rlg); padding: 14px; margin-bottom: 16px; }
-.mail-row { font-size: 12px; color: var(--gris); margin-bottom: 5px; }
-.mail-row strong { color: var(--noir); }
-.mail-divider { height: 0.5px; background: var(--creme2); margin: 10px 0; }
-.mail-body { font-size: 13px; color: var(--noir); line-height: 1.6; }
-.timeline { display: flex; flex-direction: column; gap: 0; margin-bottom: 20px; }
-.tl-item { display: flex; gap: 12px; padding-bottom: 14px; }
-.tl-left { display: flex; flex-direction: column; align-items: center; }
-.tl-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.tl-dot-done { background: var(--vert-clair); }
-.tl-dot-done svg { width: 12px; height: 12px; color: var(--vert); }
-.tl-dot-pend { background: var(--creme2); }
-.tl-line { width: 1px; flex: 1; background: var(--creme2); margin: 3px 0; min-height: 16px; }
-.tl-content { padding-top: 2px; }
-.tl-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
-.tl-sub { font-size: 12px; color: var(--gris); }
-.contact-cta { padding: 0 16px 32px; display: flex; flex-direction: column; gap: 8px; }
+/* ===== SWIPE ===== */
+#v-swipe{background:var(--creme)}
+.sw-hd{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8px}
+.sw-logo{font-family:'Playfair Display',serif;font-size:15px;white-space:nowrap}
+.sw-logo em{color:var(--or);font-style:italic}
+.sw-cnt{font-size:11px;color:var(--gris);white-space:nowrap}
+.sw-area{flex:1;position:relative;padding:0 14px;overflow:hidden}
+.scard{position:absolute;left:14px;right:14px;border-radius:24px;background:#fff;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.10);cursor:grab;user-select:none}
+.scard:active{cursor:grabbing}
+.sc-g{transform:scale(0.94) translateY(14px);opacity:.65;pointer-events:none;z-index:0}
+.sc-g2{transform:scale(0.88) translateY(28px);opacity:.35;pointer-events:none;z-index:0}
+.sc-main{z-index:10}
+.sc-img{height:175px;position:relative;overflow:hidden;background:var(--creme2)}
+.sc-img img{width:100%;height:100%;object-fit:cover}
+.sc-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8e3d8,#d4cfc4)}
+.sc-badge{position:absolute;top:10px;right:10px;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:500;z-index:2}
+.sc-badge-high{background:var(--vert);color:#fff}
+.sc-badge-mid{background:var(--or);color:var(--noir)}
+.sc-badge-low{background:var(--gris);color:#fff}
+.like-ov{position:absolute;top:16px;left:16px;background:var(--vert);color:#fff;border-radius:8px;padding:4px 12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transform:rotate(-12deg);z-index:20;transition:opacity .1s}
+.nope-ov{position:absolute;top:16px;right:16px;background:var(--rouge);color:#fff;border-radius:8px;padding:4px 12px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transform:rotate(12deg);z-index:20;transition:opacity .1s}
+.sc-body{padding:12px 14px}
+.sc-name{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:2px;line-height:1.2}
+.sc-loc{font-size:12px;color:var(--gris);margin-bottom:8px;display:flex;align-items:center;gap:3px}
+.sc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.stag{font-size:11px;padding:3px 8px;border-radius:20px}
+.stag-g{background:var(--vert-clair);color:var(--vert)}
+.stag-n{background:var(--creme);color:var(--gris)}
+.sc-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.snum{background:var(--creme);border-radius:var(--r);padding:7px 6px;text-align:center}
+.snum-v{font-size:13px;font-weight:500}
+.snum-k{font-size:10px;color:var(--gris)}
+.sw-acts{padding:12px 16px 14px;padding-bottom:max(14px,env(safe-area-inset-bottom,14px));display:flex;justify-content:center;align-items:center;gap:14px;flex-shrink:0}
+.sa{border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s;flex-shrink:0}
+.sa:active{transform:scale(.9)}
+.sa-pass{width:50px;height:50px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.sa-info{width:40px;height:40px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.sa-like{width:60px;height:60px;background:var(--noir);box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.sw-hint{font-size:11px;color:var(--gris);text-align:center;padding-bottom:4px;flex-shrink:0}
 
-/* BOTTOM NAV */
-.bottom-nav { height: 64px; background: var(--blanc); border-top: 0.5px solid var(--creme2); display: flex; align-items: center; justify-content: space-around; padding: 0 8px; padding-bottom: env(safe-area-inset-bottom, 0); flex-shrink: 0; position: relative; z-index: 50; }
-.bn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 6px 12px; border-radius: var(--r); transition: all 0.15s; border: none; background: none; font-family: inherit; }
-.bn-item svg { width: 22px; height: 22px; color: var(--creme2); transition: color 0.15s; }
-.bn-label { font-size: 10px; color: var(--creme2); transition: color 0.15s; }
-.bn-item.on svg { color: var(--noir); }
-.bn-item.on .bn-label { color: var(--noir); }
-.bn-badge { position: absolute; top: 10px; right: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--or); border: 2px solid var(--blanc); }
+/* ===== LIST VIEW ===== */
+#v-list{background:var(--creme);overflow:hidden;display:flex;flex-direction:column}
+.list-hd{padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;background:var(--creme);flex-shrink:0;border-bottom:.5px solid var(--creme2)}
+.list-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 24px;display:flex;flex-direction:column;gap:10px}
+.lcard{background:#fff;border-radius:var(--rlg);overflow:hidden;cursor:pointer;transition:transform .12s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.lcard:active{transform:scale(.99)}
+.lc-img{height:155px;position:relative;overflow:hidden;background:var(--creme2)}
+.lc-img img{width:100%;height:100%;object-fit:cover}
+.lc-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8e3d8,#d4cfc4)}
+.lc-score{position:absolute;top:10px;left:10px;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:500}
+.lcs-high{background:var(--vert);color:#fff}
+.lcs-mid{background:var(--or);color:var(--noir)}
+.lcs-low{background:var(--gris);color:#fff}
+.lc-fav{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.88);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer}
+.lc-body{padding:11px 13px}
+.lc-name{font-family:'Playfair Display',serif;font-size:15px;margin-bottom:2px;line-height:1.2}
+.lc-loc{font-size:12px;color:var(--gris);margin-bottom:7px}
+.lc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.lc-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.lnum{background:var(--creme);border-radius:6px;padding:6px;text-align:center}
+.lnum-v{font-size:12px;font-weight:500}
+.lnum-k{font-size:10px;color:var(--gris)}
+
+/* ===== DETAIL ===== */
+#v-detail{background:var(--blanc);overflow:hidden;display:flex;flex-direction:column}
+.det-gallery{height:210px;position:relative;overflow:hidden;background:var(--creme2);flex-shrink:0}
+.det-gallery img{width:100%;height:100%;object-fit:cover}
+.det-gallery-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8e3d8,#d4cfc4)}
+.gal-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.28);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.gal-prev{left:10px}.gal-next{right:10px}
+.gal-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+.gal-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;transition:background .2s}
+.gal-dot.on{background:#fff}
+.gal-cnt{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.45);color:#fff;font-size:11px;padding:2px 8px;border-radius:20px}
+.det-hd{padding:12px 16px 0;flex-shrink:0}
+.det-back{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--gris);cursor:pointer;background:none;border:none;font-family:inherit;margin-bottom:10px}
+.det-sc-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.det-sc-ring{width:50px;height:50px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.dsr-high{background:var(--vert-clair)}.dsr-mid{background:var(--or-clair)}.dsr-low{background:var(--rouge-clair)}
+.det-sc-n{font-size:18px;font-weight:500;line-height:1}
+.dsn-high{color:var(--vert)}.dsn-mid{color:var(--ambre)}.dsn-low{color:var(--rouge)}
+.det-sc-d{font-size:9px;color:var(--gris)}
+.det-sc-lbl{font-size:12px;font-weight:500}
+.det-sc-lbl-high{color:var(--vert)}.det-sc-lbl-mid{color:var(--ambre)}.det-sc-lbl-low{color:var(--rouge)}
+.det-ref{font-size:11px;color:var(--gris)}
+.det-name{font-family:'Playfair Display',serif;font-size:21px;line-height:1.2;margin-bottom:3px}
+.det-loc{font-size:12px;color:var(--gris);margin-bottom:10px}
+.det-tabs{display:flex;border-bottom:.5px solid var(--creme2);padding:0 16px;flex-shrink:0;overflow-x:auto}
+.det-tabs::-webkit-scrollbar{display:none}
+.dtab{font-size:13px;padding:9px 12px;cursor:pointer;color:var(--gris);border-bottom:2px solid transparent;margin-bottom:-.5px;white-space:nowrap;transition:all .12s}
+.dtab.on{color:var(--noir);border-bottom-color:var(--noir);font-weight:500}
+.det-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tab-pane{display:none;padding:14px 16px}
+.tab-pane.on{display:block}
+.tp-section{margin-bottom:16px}
+.tp-s-t{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--gris);margin-bottom:8px;padding-bottom:5px;border-bottom:.5px solid var(--creme2)}
+.tp-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;border-bottom:.5px solid var(--creme);gap:8px}
+.tp-row:last-child{border:none}
+.tp-k{color:var(--gris);flex-shrink:0}
+.tp-v{font-weight:500;text-align:right}
+.tp-v-green{color:var(--vert);font-weight:500}
+.dpe{display:inline-block;width:26px;height:18px;border-radius:3px;text-align:center;line-height:18px;font-size:11px;font-weight:500;color:#fff}
+.dpe-A{background:#009B3A}.dpe-B{background:#51B848}.dpe-C{background:#A9C83D;color:#333}
+.dpe-D{background:#F6C800;color:#333}.dpe-E{background:#F4901B}.dpe-F{background:#EE3323}.dpe-G{background:#C31E26}
+.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.fin-c{background:var(--creme);border-radius:var(--r);padding:10px 11px}
+.fin-k{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.fin-v{font-size:17px;font-weight:500}
+.fin-v-g{color:var(--vert)}
+.map-ph{height:110px;background:linear-gradient(135deg,#e4f0ea,#d0e8d8);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin-bottom:10px}
+.map-ph svg{width:24px;height:24px;color:var(--vert)}
+.map-ph span{font-size:12px;color:var(--vert);font-weight:500}
+.flux-bar{margin-bottom:10px}
+.flux-lbl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.flux-track{height:6px;background:var(--creme2);border-radius:6px;overflow:hidden}
+.flux-fill{height:6px;border-radius:6px;background:var(--vert)}
+.mp{padding:8px 12px;border-radius:var(--r);margin-bottom:5px;font-size:13px;line-height:1.5}
+.mp-g{background:var(--vert-clair);color:#1a4a35;border-left:3px solid var(--vert);border-radius:0 var(--r) var(--r) 0}
+.mp-a{background:var(--or-clair);color:var(--ambre);border-left:3px solid var(--or);border-radius:0 var(--r) var(--r) 0}
+.sc-big{width:64px;height:64px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px}
+.det-cta{padding:10px 16px;padding-bottom:max(16px,env(safe-area-inset-bottom,16px));display:flex;flex-direction:column;gap:7px;flex-shrink:0;border-top:.5px solid var(--creme2)}
+.contact-btn{width:100%;background:var(--or);color:var(--noir);border:none;border-radius:40px;padding:13px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s}
+.contact-btn:hover{opacity:.88}
+.fav-btn{width:100%;background:transparent;color:var(--noir);border:1px solid var(--creme2);border-radius:40px;padding:11px;font-size:13px;font-family:inherit;cursor:pointer}
+
+/* ===== CONTACT ===== */
+#v-contact{overflow-y:auto}
+.ct-hero{background:var(--noir);padding:36px 20px 28px;text-align:center;flex-shrink:0}
+.ct-check{width:60px;height:60px;border-radius:50%;background:rgba(201,168,76,.15);border:2px solid var(--or);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.ct-check svg{width:28px;height:28px;color:var(--or)}
+.ct-ttl{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin-bottom:5px}
+.ct-sub{font-size:13px;color:rgba(255,255,255,.45);line-height:1.5}
+.ct-body{padding:18px 16px}
+.mail-card{background:var(--creme);border-radius:var(--rlg);padding:13px;margin-bottom:14px}
+.mail-r{font-size:12px;color:var(--gris);margin-bottom:4px}
+.mail-r strong{color:var(--noir)}
+.mail-div{height:.5px;background:var(--creme2);margin:9px 0}
+.mail-body{font-size:13px;color:var(--noir);line-height:1.6}
+.tl{display:flex;flex-direction:column;gap:0;margin-bottom:18px}
+.tl-item{display:flex;gap:11px;padding-bottom:12px}
+.tl-l{display:flex;flex-direction:column;align-items:center}
+.tl-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tl-done{background:var(--vert-clair)}.tl-done svg{width:11px;height:11px;color:var(--vert)}
+.tl-pend{background:var(--creme2)}
+.tl-line{width:1px;flex:1;background:var(--creme2);margin:3px 0;min-height:14px}
+.tl-c{padding-top:2px}
+.tl-ttl{font-size:13px;font-weight:500;margin-bottom:1px}
+.tl-sub{font-size:11px;color:var(--gris)}
+.ct-cta{padding:0 16px 28px;padding-bottom:max(28px,env(safe-area-inset-bottom,28px));display:flex;flex-direction:column;gap:7px}
+
+/* ===== BOTTOM NAV ===== */
+.bnav{height:60px;background:#fff;border-top:.5px solid var(--creme2);display:flex;align-items:center;justify-content:space-around;padding:0 8px;padding-bottom:env(safe-area-inset-bottom,0);flex-shrink:0;position:relative;z-index:50}
+.bn{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border:none;background:none;font-family:inherit;position:relative}
+.bn svg{width:20px;height:20px;color:var(--creme2);transition:color .12s}
+.bn span{font-size:10px;color:var(--creme2);transition:color .12s}
+.bn.on svg{color:var(--noir)}.bn.on span{color:var(--noir)}
+.bn-badge{position:absolute;top:4px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--or);border:2px solid #fff;display:none}
 
 /* TOAST */
-.toast { position: absolute; bottom: 76px; left: 50%; transform: translateX(-50%); background: var(--noir); color: var(--blanc); padding: 9px 18px; border-radius: 20px; font-size: 13px; display: none; z-index: 999; white-space: nowrap; pointer-events: none; }
-.toast.on { display: block; }
-
-/* DESKTOP */
-@media (min-width: 500px) {
-  body { background: #1a1a1a; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
-  .app { height: 90vh; max-height: 820px; min-height: 600px; border-radius: 40px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.5); flex-shrink: 0; }
-}
-
-/* VIEW TOGGLE */
-.view-toggle { display: flex; gap: 4px; background: var(--creme); border-radius: 20px; padding: 3px; }
-.vt-btn { border: none; background: none; padding: 5px 12px; border-radius: 16px; font-size: 12px; font-family: inherit; cursor: pointer; color: var(--gris); transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
-.vt-btn.on { background: var(--blanc); color: var(--noir); font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-.vt-btn svg { width: 13px; height: 13px; }
-
-/* LIST VIEW */
-#v-list { background: var(--creme); overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.list-header { padding: 14px 16px 10px; display: flex; align-items: center; justify-content: space-between; background: var(--creme); position: sticky; top: 0; z-index: 10; border-bottom: 0.5px solid var(--creme2); }
-.list-title { font-family: 'Playfair Display', serif; font-size: 16px; }
-.list-sub { font-size: 11px; color: var(--gris); }
-.list-scroll { padding: 10px 12px 24px; display: flex; flex-direction: column; gap: 10px; }
-.lcard { background: var(--blanc); border-radius: var(--rlg); overflow: hidden; cursor: pointer; transition: transform 0.15s; }
-.lcard:active { transform: scale(0.99); }
-.lcard-img { height: 160px; position: relative; overflow: hidden; }
-.lcard-img img { width: 100%; height: 100%; object-fit: cover; }
-.lcard-img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--creme2) 0%, #d4cfc4 100%); display: flex; align-items: center; justify-content: center; }
-.lcard-score { position: absolute; top: 10px; left: 10px; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 500; }
-.lsc-high { background: var(--vert); color: white; }
-.lsc-mid { background: var(--or); color: var(--noir); }
-.lsc-low { background: var(--gris); color: white; }
-.lcard-fav { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
-.lcard-body { padding: 12px 14px; }
-.lcard-name { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 3px; line-height: 1.25; }
-.lcard-loc { font-size: 12px; color: var(--gris); margin-bottom: 8px; }
-.lcard-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
-.lcard-nums { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-.lnum { background: var(--creme); border-radius: var(--r); padding: 6px 8px; text-align: center; }
-.lnum-v { font-size: 13px; font-weight: 500; }
-.lnum-k { font-size: 10px; color: var(--gris); }
-
-/* DETAIL PHOTOS */
-.photo-gallery { position: relative; height: 220px; overflow: hidden; }
-.photo-gallery img { width: 100%; height: 100%; object-fit: cover; }
-.photo-gallery-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--creme2) 0%, #d4cfc4 100%); display: flex; align-items: center; justify-content: center; }
-.photo-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
-.photo-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.2s; }
-.photo-dot.on { background: white; }
-.photo-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
-.photo-nav-prev { left: 10px; }
-.photo-nav-next { right: 10px; }
-.photo-count { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); color: white; font-size: 11px; padding: 2px 8px; border-radius: 20px; }
-
-/* DETAIL ENRICHED */
-.det-tabs { display: flex; border-bottom: 0.5px solid var(--creme2); padding: 0 16px; }
-.det-tab { font-size: 13px; padding: 10px 14px; cursor: pointer; color: var(--gris); border-bottom: 2px solid transparent; margin-bottom: -0.5px; transition: all 0.15s; white-space: nowrap; }
-.det-tab.on { color: var(--noir); border-bottom-color: var(--noir); font-weight: 500; }
-.det-tab-content { display: none; }
-.det-tab-content.on { display: block; }
-.stat-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--creme); font-size: 13px; }
-.stat-row:last-child { border: none; }
-.stat-k { color: var(--gris); }
-.stat-v { font-weight: 500; }
-.stat-v-green { color: var(--vert); font-weight: 500; }
-.dpe-badge { display: inline-block; width: 28px; height: 20px; border-radius: 3px; text-align: center; line-height: 20px; font-size: 12px; font-weight: 500; color: white; }
-.dpe-A { background: #009B3A; } .dpe-B { background: #51B848; } .dpe-C { background: #A9C83D; color: #333; }
-.dpe-D { background: #F6C800; color: #333; } .dpe-E { background: #F4901B; } .dpe-F { background: #EE3323; } .dpe-G { background: #C31E26; }
-.finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
-.fin-card { background: var(--creme); border-radius: var(--r); padding: 10px 12px; }
-.fin-k { font-size: 10px; color: var(--gris); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
-.fin-v { font-size: 16px; font-weight: 500; }
-.fin-v-green { color: var(--vert); }
-.map-placeholder { height: 120px; background: linear-gradient(135deg, #e8f4ea 0%, #d4ecd8 100%); border-radius: var(--r); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; }
-.map-placeholder svg { width: 28px; height: 28px; color: var(--vert); }
-.map-placeholder span { font-size: 12px; color: var(--vert); font-weight: 500; }
+.toast{position:absolute;bottom:74px;left:50%;transform:translateX(-50%);background:var(--noir);color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;display:none;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.on{display:block}
 </style>
 </head>
 <body>
+<div class="shell">
 <div class="app" id="app">
 
-  <!-- SPLASH -->
-  <div class="view" id="v-splash">
-    <div class="splash-logo">Fonds<span>Match</span></div>
-    <div class="splash-sub">PARIS · FONDS DE COMMERCE</div>
-    <button class="splash-btn" onclick="goView('chat')">Commencer ma recherche</button>
-    <div class="splash-dots">
-      <div class="splash-dot on"></div>
-      <div class="splash-dot"></div>
-      <div class="splash-dot"></div>
-    </div>
-  </div>
-
-  <!-- CHAT / ONBOARDING -->
-  <div class="view hidden" id="v-chat">
-    <div class="chat-header">
-      <div class="chat-avatar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2" stroke-linecap="round"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
-      <div>
-        <div class="chat-title">Assistant FondsMatch</div>
-        <div class="chat-status">● En ligne</div>
-      </div>
-    </div>
-    <div class="chat-progress" id="chat-progress">
-      <div class="cp done"></div><div class="cp"></div><div class="cp"></div><div class="cp"></div>
-    </div>
-    <div class="chat-messages" id="chat-messages"></div>
-    <div class="chat-input-area">
-      <div class="chat-input-row">
-        <textarea class="chat-textarea" id="chat-input" placeholder="Répondez ici…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
-        </button>
-        <button class="send-btn" onclick="sendMessage()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- PROFIL CONSTRUIT -->
-  <div class="view hidden" id="v-profil">
-    <div class="profil-header">
-      <div class="profil-header-top">
-        <button class="back-btn" onclick="goView('chat')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div>
-          <div class="profil-title">Votre profil</div>
-          <div class="profil-sub">Vérifiez et ajustez vos critères</div>
-        </div>
-      </div>
-      <div class="match-count-bar">
-        <div><div class="mcb-num" id="match-num">38</div><div class="mcb-label">annonces correspondent</div></div>
-        <div class="mcb-arrow">→</div>
-      </div>
-    </div>
-    <div class="profil-scroll">
-      <div class="crit-section">
-        <div class="cs-title">Localisation & surface</div>
-        <div class="crit-grid" id="crit-grid"></div>
-      </div>
-      <div class="crit-section">
-        <div class="cs-title">Critères techniques</div>
-        <div class="crit-grid" id="crit-tech"></div>
-      </div>
-      <div class="crit-section" id="crit-rh-section">
-        <div class="cs-title">Rédhibitoires</div>
-        <div class="rh-box" id="crit-rh"></div>
-      </div>
-    </div>
-    <div class="profil-cta">
-      <button class="big-btn btn-gold" onclick="goView('swipe')">Voir les annonces →</button>
-      <button class="big-btn btn-outline" onclick="goView('chat')" style="margin-top:6px;">Affiner ma recherche</button>
-    </div>
-  </div>
-
-  <!-- SWIPE -->
-  <div class="view hidden" id="v-swipe">
-    <div class="swipe-header">
-      <div class="sh-logo">Fonds<span>Match</span></div>
-      <div class="view-toggle">
-        <button class="vt-btn on" id="vt-swipe" onclick="switchView('swipe')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="9" height="18" rx="2"/><rect x="13" y="3" width="9" height="18" rx="2"/></svg>
-          Swipe
-        </button>
-        <button class="vt-btn" id="vt-list" onclick="switchView('list')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-          Liste
-        </button>
-      </div>
-      <div class="sh-count" id="swipe-count">8 annonces</div>
-    </div>
-    <div class="swipe-area" id="swipe-area">
-      <div class="scard scard-ghost2" id="scard-ghost2"></div>
-      <div class="scard scard-ghost" id="scard-ghost"></div>
-      <div class="scard scard-main" id="scard-main">
-        <div class="swipe-like-overlay" id="like-overlay">GARDER ♥</div>
-        <div class="swipe-nope-overlay" id="nope-overlay">PASSER ✕</div>
-      </div>
-    </div>
-    <div class="swipe-actions">
-      <button class="sa-btn sa-pass" onclick="swipeLeft()" aria-label="Passer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-      <button class="sa-btn sa-info" onclick="goView('detail')" aria-label="Voir le détail">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      </button>
-      <button class="sa-btn sa-like" onclick="swipeRight()" aria-label="Garder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </button>
-    </div>
-    <div class="swipe-hint">← Passer · Info · Garder →</div>
-  </div>
-
-  <!-- LIST VIEW -->
-  <div class="view hidden" id="v-list">
-    <div class="list-header">
-      <div>
-        <div class="list-title">Annonces</div>
-        <div class="list-sub" id="list-sub">8 résultats · triés par pertinence</div>
-      </div>
-      <div class="view-toggle">
-        <button class="vt-btn" id="vt-swipe2" onclick="switchView('swipe')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="9" height="18" rx="2"/><rect x="13" y="3" width="9" height="18" rx="2"/></svg>
-          Swipe
-        </button>
-        <button class="vt-btn on" id="vt-list2" onclick="switchView('list')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-          Liste
-        </button>
-      </div>
-    </div>
-    <div class="list-scroll" id="list-scroll"></div>
-  </div>
-
-  <!-- DETAIL -->
-  <div class="view hidden" id="v-detail">
-    <div class="photo-gallery" id="det-gallery">
-      <div class="photo-gallery-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="40" height="40"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-      <button class="photo-nav photo-nav-prev" onclick="prevPhoto()" id="photo-prev" style="display:none">‹</button>
-      <button class="photo-nav photo-nav-next" onclick="nextPhoto()" id="photo-next" style="display:none">›</button>
-      <div class="photo-dots" id="photo-dots"></div>
-      <div class="photo-count" id="photo-count" style="display:none"></div>
-    </div>
-    <div class="det-hero" style="padding:12px 16px;">
-      <button class="det-back" onclick="backFromDetail()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        Retour
-      </button>
-      <div class="det-score-row">
-        <div class="det-score-circle"><div class="det-score-n" id="det-score-n">89</div><div class="det-score-d">/100</div></div>
-        <div>
-          <div class="det-score-txt" id="det-score-txt">Très bon match</div>
-          <div style="font-size:11px;color:var(--gris);" id="det-ref"></div>
-        </div>
-      </div>
-      <div class="det-name" id="det-name">Restaurant terrasse Montorgueil</div>
-      <div class="det-loc" id="det-loc">Paris 2e · Montorgueil · 140 m²</div>
-    </div>
-    <div class="det-tabs">
-      <div class="det-tab on" onclick="switchDetTab(0,this)">Infos</div>
-      <div class="det-tab" onclick="switchDetTab(1,this)">Finances</div>
-      <div class="det-tab" onclick="switchDetTab(2,this)">Quartier</div>
-      <div class="det-tab" onclick="switchDetTab(3,this)">Match</div>
-    </div>
-    <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;">
-      <div class="det-body det-tab-content on" id="dtab-0">
-        <div id="det-data"></div>
-      </div>
-      <div class="det-body det-tab-content" id="dtab-1">
-        <div id="det-finances"></div>
-      </div>
-      <div class="det-body det-tab-content" id="dtab-2">
-        <div id="det-quartier"></div>
-      </div>
-      <div class="det-body det-tab-content" id="dtab-3">
-        <div id="det-match"></div>
-      </div>
-    </div>
-    <div class="det-cta">
-      <button class="contact-btn" onclick="goContact()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        Contacter l'agence
-      </button>
-      <button class="fav-btn" onclick="addFav()">♡ Ajouter aux favoris</button>
-    </div>
-  </div>
-
-  <!-- CONTACT ENVOYÉ -->
-  <div class="view hidden" id="v-contact">
-    <div class="contact-hero">
-      <div class="check-circle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <div class="contact-hero-title">Demande envoyée</div>
-      <div class="contact-hero-sub">L'agence a été notifiée de votre intérêt et vous recontactera sous 24h.</div>
-    </div>
-    <div class="contact-body">
-      <div class="mail-card">
-        <div class="mail-row"><strong>À :</strong> Wall Street Partners</div>
-        <div class="mail-row"><strong>Objet :</strong> Client intéressé — <span id="mail-annonce">Montorgueil</span></div>
-        <div class="mail-divider"></div>
-        <div class="mail-body" id="mail-body">Un acheteur qualifié est intéressé par votre annonce. Budget de reprise confirmé. Projet de restaurant premium casual. Coordonnées disponibles sur demande via FondsMatch.</div>
-      </div>
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-left"><div class="tl-dot tl-dot-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tl-line"></div></div>
-          <div class="tl-content"><div class="tl-title">Profil soumis</div><div class="tl-sub">Vos critères ont été envoyés</div></div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-left"><div class="tl-dot tl-dot-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tl-line"></div></div>
-          <div class="tl-content"><div class="tl-title">Agence notifiée</div><div class="tl-sub">Mail de mise en relation envoyé</div></div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-left"><div class="tl-dot tl-dot-pend"></div><div class="tl-line"></div></div>
-          <div class="tl-content"><div class="tl-title">Réponse de l'agence</div><div class="tl-sub">Sous 24h en moyenne</div></div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-left"><div class="tl-dot tl-dot-pend"></div></div>
-          <div class="tl-content"><div class="tl-title">Visite organisée</div><div class="tl-sub">À votre convenance</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="contact-cta">
-      <button class="big-btn btn-dark" onclick="goView('swipe')">Continuer ma recherche</button>
-      <button class="big-btn btn-outline" onclick="showFavs()" style="margin-top:6px;">Voir mes favoris (<span id="fav-count">0</span>)</button>
-    </div>
-  </div>
-
-  <!-- BOTTOM NAV -->
-  <div class="bottom-nav" id="bottom-nav" style="display:none;">
-    <button class="bn-item on" onclick="navTo('swipe',this)" id="bn-search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <span class="bn-label">Chercher</span>
-    </button>
-    <button class="bn-item" onclick="navTo('favoris',this)" id="bn-favs">
-      <div style="position:relative">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <div class="bn-badge" id="fav-badge" style="display:none"></div>
-      </div>
-      <span class="bn-label">Favoris</span>
-    </button>
-    <button class="bn-item" onclick="navTo('contact',this)" id="bn-contacts">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      <span class="bn-label">Contacts</span>
-    </button>
-    <button class="bn-item" onclick="navTo('profil',this)" id="bn-profil">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="bn-label">Mon profil</span>
-    </button>
-  </div>
-
-  <div class="toast" id="toast"></div>
+<!-- SPLASH -->
+<div class="view" id="v-splash">
+  <div class="sp-logo">Fonds<em>Match</em></div>
+  <div class="sp-sub">Paris · Fonds de commerce</div>
+  <button class="sp-btn" onclick="goView('chat')">Commencer ma recherche</button>
 </div>
+
+<!-- CHAT -->
+<div class="view hidden" id="v-chat">
+  <div class="chat-hd">
+    <div class="chat-av"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2.5" stroke-linecap="round"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+    <div><div class="chat-name">Assistant FondsMatch</div><div class="chat-online">● En ligne</div></div>
+  </div>
+  <div class="chat-prog" id="cprog"><div class="cp done"></div><div class="cp"></div><div class="cp"></div><div class="cp"></div></div>
+  <div class="chat-msgs" id="cmsgs"></div>
+  <div class="chat-inp">
+    <div class="inp-row">
+      <textarea class="inp-ta" id="cinput" placeholder="Répondez ici…" rows="1" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+      <button class="mic-b" id="micb" onclick="toggleMic()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg></button>
+      <button class="send-b" onclick="send()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFIL -->
+<div class="view hidden" id="v-profil">
+  <div class="profil-hd">
+    <div class="profil-hd-top">
+      <button class="back-b" onclick="goView('chat')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div><div class="profil-ttl">Votre profil</div><div class="profil-sub">Vérifiez vos critères</div></div>
+    </div>
+    <div class="match-bar"><div><div class="mb-num" id="mnb">8</div><div class="mb-lbl">annonces correspondent</div></div><span style="color:var(--or);font-size:18px">→</span></div>
+  </div>
+  <div class="profil-scroll"><div class="cs"><div class="cs-t">Projet & localisation</div><div class="cg" id="cg1"></div></div><div class="cs"><div class="cs-t">Critères techniques</div><div class="cg" id="cg2"></div></div><div class="cs" id="rhs" style="display:none"><div class="cs-t">Rédhibitoires</div><div class="rh-box" id="rhb"></div></div></div>
+  <div class="profil-cta"><button class="btn btn-gold" onclick="goView('swipe')">Voir les annonces →</button><button class="btn btn-out" onclick="goView('chat')" style="margin-top:4px">Affiner ma recherche</button></div>
+</div>
+
+<!-- SWIPE -->
+<div class="view hidden" id="v-swipe">
+  <div class="sw-hd">
+    <div class="sw-logo">Fonds<em>Match</em></div>
+    <div class="vtog">
+      <button class="vt on" id="vts" onclick="switchMode('swipe')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="9" height="18" rx="2"/><rect x="13" y="3" width="9" height="18" rx="2"/></svg>Swipe</button>
+      <button class="vt" id="vtl" onclick="switchMode('list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Liste</button>
+    </div>
+    <div class="sw-cnt" id="swcnt">8 annonces</div>
+  </div>
+  <div class="sw-area" id="swarea">
+    <div class="scard sc-g2" id="scg2"></div>
+    <div class="scard sc-g" id="scg"></div>
+    <div class="scard sc-main" id="scmain"></div>
+  </div>
+  <div class="sw-acts">
+    <button class="sa sa-pass" onclick="swipeL()" aria-label="Passer"><svg viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2.5" stroke-linecap="round" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <button class="sa sa-info" onclick="openDetail(CUR_IDX,'swipe')" aria-label="Détail"><svg viewBox="0 0 24 24" fill="none" stroke="#7a7570" stroke-width="2" stroke-linecap="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></button>
+    <button class="sa sa-like" onclick="swipeR()" aria-label="Garder"><svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" width="26" height="26"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+  </div>
+  <div class="sw-hint">← Passer · ⓘ Détail · Garder →</div>
+</div>
+
+<!-- LIST -->
+<div class="view hidden" id="v-list">
+  <div class="list-hd">
+    <div><div style="font-family:'Playfair Display',serif;font-size:16px">Annonces</div><div style="font-size:11px;color:var(--gris)" id="list-sub">8 résultats · par pertinence</div></div>
+    <div class="vtog">
+      <button class="vt" id="vts2" onclick="switchMode('swipe')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="9" height="18" rx="2"/><rect x="13" y="3" width="9" height="18" rx="2"/></svg>Swipe</button>
+      <button class="vt on" id="vtl2" onclick="switchMode('list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Liste</button>
+    </div>
+  </div>
+  <div class="list-scroll" id="listscroll"></div>
+</div>
+
+<!-- DETAIL -->
+<div class="view hidden" id="v-detail">
+  <div class="det-gallery" id="detgal"></div>
+  <div class="det-hd">
+    <button class="det-back" onclick="backDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><polyline points="15 18 9 12 15 6"/></svg>Retour</button>
+    <div class="det-sc-row">
+      <div class="det-sc-ring" id="dsr"><div class="det-sc-n" id="dsn">89</div><div class="det-sc-d">/100</div></div>
+      <div><div class="det-sc-lbl" id="dslbl">Très bon match</div><div class="det-ref" id="dref"></div></div>
+    </div>
+    <div class="det-name" id="dname"></div>
+    <div class="det-loc" id="dloc"></div>
+  </div>
+  <div class="det-tabs">
+    <div class="dtab on" onclick="dtab(0,this)">Infos</div>
+    <div class="dtab" onclick="dtab(1,this)">Finances</div>
+    <div class="dtab" onclick="dtab(2,this)">Quartier</div>
+    <div class="dtab" onclick="dtab(3,this)">Match</div>
+  </div>
+  <div class="det-body">
+    <div class="tab-pane on" id="dp0"></div>
+    <div class="tab-pane" id="dp1"></div>
+    <div class="tab-pane" id="dp2"></div>
+    <div class="tab-pane" id="dp3"></div>
+  </div>
+  <div class="det-cta">
+    <button class="contact-btn" onclick="goContact()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Contacter l'agence</button>
+    <button class="fav-btn" onclick="addFav()">♡ Ajouter aux favoris</button>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="view hidden" id="v-contact">
+  <div class="ct-hero">
+    <div class="ct-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="28" height="28"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="ct-ttl">Demande envoyée</div>
+    <div class="ct-sub">L'agence a été notifiée et vous recontactera sous 24h.</div>
+  </div>
+  <div class="ct-body">
+    <div class="mail-card">
+      <div class="mail-r"><strong>À :</strong> <span id="mail-ag">Wall Street Partners</span></div>
+      <div class="mail-r"><strong>Objet :</strong> Client intéressé — <span id="mail-ref">—</span></div>
+      <div class="mail-div"></div>
+      <div class="mail-body" id="mail-body">Un acheteur qualifié est intéressé par votre annonce.</div>
+    </div>
+    <div class="tl">
+      <div class="tl-item"><div class="tl-l"><div class="tl-dot tl-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tl-line"></div></div><div class="tl-c"><div class="tl-ttl">Profil soumis</div><div class="tl-sub">Vos critères ont été envoyés</div></div></div>
+      <div class="tl-item"><div class="tl-l"><div class="tl-dot tl-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tl-line"></div></div><div class="tl-c"><div class="tl-ttl">Agence notifiée</div><div class="tl-sub">Mail de mise en relation envoyé</div></div></div>
+      <div class="tl-item"><div class="tl-l"><div class="tl-dot tl-pend"></div><div class="tl-line"></div></div><div class="tl-c"><div class="tl-ttl">Réponse de l'agence</div><div class="tl-sub">Sous 24h en moyenne</div></div></div>
+      <div class="tl-item"><div class="tl-l"><div class="tl-dot tl-pend"></div></div><div class="tl-c"><div class="tl-ttl">Visite organisée</div><div class="tl-sub">À votre convenance</div></div></div>
+    </div>
+  </div>
+  <div class="ct-cta">
+    <button class="btn btn-dark" onclick="goView('swipe')">Continuer ma recherche</button>
+    <button class="btn btn-out" style="margin-top:4px" onclick="showToast('Favoris — bientôt disponible')">Mes favoris (<span id="favcnt">0</span>)</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav" id="bnav" style="display:none">
+  <button class="bn on" id="bn0" onclick="bnav('swipe',0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Chercher</span></button>
+  <button class="bn" id="bn1" onclick="bnav('fav',1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>Favoris</span><div class="bn-badge" id="favbadge"></div></button>
+  <button class="bn" id="bn2" onclick="bnav('contact',2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Contacts</span></button>
+  <button class="bn" id="bn3" onclick="goView('profil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil</span></button>
+</div>
+
+<div class="toast" id="toast"></div>
+</div><!-- app -->
+</div><!-- shell -->
 
 <script>
 // ===== DATA =====
-const LISTINGS = [
-  { id:'L001', t:'Restaurant terrasse Montorgueil', a:2, q:'Montorgueil', st:140, ex:true, l4:false, te:24, ip:48, fa:7.2, ag:true, lo:72000, pr:540000, et:'bon', en:'Bureaux, tourisme, rue très active', de:'Extraction existante, salle rectangulaire, cave saine. Emplacement d\'angle à fort flux mixte midi et soir. Local livré propre avec cuisine équipée partielle. Bail 3/6/9 en cours, échéance 2027.', co:'Brasserie moderne, bistrot premium', flux:'Très fort', profil:'Bureaux + tourisme', concurrence:4,
-    photos:['https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80','https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80','https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80'],
-    bail:'3/6/9 · Échéance 2027', dpe:'C', charges:6000, ca:480000, ebe:72000, travaux:'Rafraîchissement déco', agence:'Wall Street Partners', ref:'WSP-2024-1847' },
-  { id:'L002', t:'Bistro Saint-Germain', a:6, q:'Saint-Germain', st:130, ex:true, l4:false, te:12, ip:42, fa:6.4, ag:false, lo:88000, pr:690000, et:'très bon', en:'CSP+, tourisme qualitatif, soirée active', de:'Emplacement élégant dans l\'une des rues les plus recherchées du 6e. Clientèle de destination, fort potentiel ticket moyen élevé. Local livré en parfait état avec cuisine complète.', co:'Gastronomique, bistronomie', flux:'Fort', profil:'CSP+ / Destination', concurrence:6,
-    photos:['https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80','https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&q=80'],
-    bail:'3/6/9 · Échéance 2026', dpe:'B', charges:8500, ca:620000, ebe:95000, travaux:'Aucun', agence:'Guy Hoquet Entreprises', ref:'GHE-2024-0392' },
-  { id:'L003', t:'Local street food République', a:10, q:'République', st:74, ex:true, l4:false, te:0, ip:22, fa:4.8, ag:false, lo:34000, pr:145000, et:'correct', en:'Jeune, flux dense, bureaux, résidentiel', de:'Petit local efficace avec extraction légère. Parfait pour première affaire ou concept compact. Flux piéton dense toute la journée. Cuisine à compléter.', co:'Street food, restauration rapide', flux:'Très fort', profil:'Jeune / Bureaux', concurrence:8,
-    photos:['https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80','https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80'],
-    bail:'3/6/9 · Échéance 2025', dpe:'D', charges:3600, ca:null, ebe:null, travaux:'Cuisine à compléter', agence:'Michel Simond', ref:'MS-2024-7731' },
-  { id:'L004', t:'Brasserie angle Batignolles', a:17, q:'Batignolles', st:210, ex:true, l4:false, te:32, ip:70, fa:10.5, ag:true, lo:108000, pr:860000, et:'bon', en:'Résidentiel aisé, bureaux, quartier vivant', de:'Très belle façade d\'angle avec 10,5 ml de vitrine. Gros volume, terrasse installée et autorisée. Quartier en forte montée en gamme. Configuration idéale pour une grande brasserie. Cave de 40 m².', co:'Grande brasserie, café-restaurant', flux:'Fort', profil:'Résidentiel aisé', concurrence:3,
-    photos:['https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?w=600&q=80','https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&q=80','https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80'],
-    bail:'3/6/9 · Échéance 2028', dpe:'C', charges:9000, ca:780000, ebe:115000, travaux:'Déco à moderniser', agence:'Wall Street Partners', ref:'WSP-2024-2103' },
-  { id:'L005', t:'Cave à manger Marais', a:4, q:'Marais', st:96, ex:false, l4:true, te:10, ip:30, fa:5.5, ag:false, lo:52000, pr:290000, et:'très bon', en:'Tourisme, destination, flux soir', de:'Local de charme exceptionnel avec pierre apparente et cave voûtée du 17e. Licence IV en place. Mobilier inclus dans la cession. Concept cave à manger naturels en place, vendeur pour raisons personnelles.', co:'Cave à manger, bar à vins', flux:'Fort soir', profil:'Tourisme / Destination', concurrence:5,
-    photos:['https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80','https://images.unsplash.com/photo-1416339134316-0e91dc9ded92?w=600&q=80'],
-    bail:'3/6/9 · Échéance 2029', dpe:'E', charges:4200, ca:310000, ebe:48000, travaux:'Aucun — mobilier inclus', agence:'BFC Immo', ref:'BFC-2024-0581' },
-  { id:'L006', t:'Coffee shop Opéra', a:9, q:'Opéra', st:68, ex:false, l4:false, te:8, ip:24, fa:6.8, ag:true, lo:47000, pr:230000, et:'très bon', en:'Bureaux, tourisme, shopping', de:'Très fort flux journée dans l\'un des quartiers les plus fréquentés de Paris. Vitrine large d\'angle. Petite préparation possible. Clientèle bureaux et touristes abondante. Local livré équipé.', co:'Coffee shop, brunch, salon de thé', flux:'Très fort journée', profil:'Bureaux / Shopping', concurrence:7,
-    photos:['https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80','https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80'],
-    bail:'3/6/9 · Échéance 2026', dpe:'C', charges:3000, ca:240000, ebe:38000, travaux:'Aucun', agence:'Point de Vente', ref:'PV-2024-4492' },
-  { id:'L007', t:'Restaurant premium Madeleine', a:8, q:'Madeleine', st:165, ex:true, l4:false, te:18, ip:54, fa:7.9, ag:false, lo:94000, pr:780000, et:'très bon', en:'Bureaux, luxe, tourisme', de:'Emplacement qualitatif dans l\'un des quartiers les plus huppés de Paris. Extraction conforme aux normes 2024. Local livré en très bon état. Fort potentiel déjeuner affaires et dîner premium.', co:'Restaurant d\'affaires, gastronomique', flux:'Fort midi', profil:'Luxe / Affaires', concurrence:4,
-    photos:['https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80','https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80','https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600&q=80'],
-    bail:'3/6/9 · Échéance 2027', dpe:'B', charges:7200, ca:890000, ebe:134000, travaux:'Aucun', agence:'Guy Hoquet Entreprises', ref:'GHE-2024-1156' },
-  { id:'L008', t:'Bar festif Oberkampf', a:11, q:'Oberkampf', st:120, ex:false, l4:true, te:14, ip:38, fa:5.9, ag:false, lo:61000, pr:420000, et:'bon', en:'Quartier de nuit, destination soir', de:'Exploitation bar évidente dans le quartier le plus vivant de Paris le soir. Licence IV en place. Acoustique à traiter. Fort potentiel cocktails et tapas. Terrasse autorisée jusqu\'à minuit.', co:'Bar à cocktails, tapas-bar', flux:'Fort soir', profil:'Sortie / Nuit', concurrence:9,
-    photos:['https://images.unsplash.com/photo-1575444758702-4a6b9222336e?w=600&q=80','https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80'],
-    bail:'3/6/9 · Échéance 2026', dpe:'D', charges:5000, ca:380000, ebe:52000, travaux:'Acoustique', agence:'Michel Simond', ref:'MS-2024-8820' },
+const DATA = [
+  {id:'L001',t:'Restaurant terrasse Montorgueil',a:2,q:'Montorgueil',st:140,sr:115,ex:true,l4:false,te:24,ip:48,fa:7.2,ag:true,lo:72000,pr:540000,et:'Bon',travaux:'Rafraîchissement déco',dpe:'C',bail:'3/6/9 · Échéance 2027',charges:6000,ca:480000,ebe:72000,agence:'Wall Street Partners',ref:'WSP-1847',flux:'Très fort',profil:'Bureaux + tourisme',concurrence:4,en:'Bureaux, tourisme, rue très active',de:"Extraction existante, salle rectangulaire, cave saine. Emplacement d'angle à fort flux mixte midi et soir. Local livré propre avec cuisine équipée partielle.",co:'Brasserie moderne, bistrot premium, cuisine du marché',photos:['https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80','https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80','https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80']},
+  {id:'L002',t:'Bistro Saint-Germain-des-Prés',a:6,q:'Saint-Germain',st:130,sr:105,ex:true,l4:false,te:12,ip:42,fa:6.4,ag:false,lo:88000,pr:690000,et:'Très bon',travaux:'Aucun',dpe:'B',bail:'3/6/9 · Échéance 2026',charges:8500,ca:620000,ebe:95000,agence:'Guy Hoquet Entreprises',ref:'GHE-0392',flux:'Fort',profil:'CSP+ / Destination',concurrence:6,en:'CSP+, tourisme qualitatif, soirée active',de:"Emplacement élégant dans une des rues les plus recherchées du 6e. Clientèle de destination, fort potentiel de ticket moyen élevé. Local livré en parfait état avec cuisine complète.",co:'Gastronomique accessible, bistronomie, cave à manger',photos:['https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80','https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&q=80']},
+  {id:'L003',t:'Local street food République',a:10,q:'République',st:74,sr:60,ex:true,l4:false,te:0,ip:22,fa:4.8,ag:false,lo:34000,pr:145000,et:'Correct',travaux:'Cuisine à compléter',dpe:'D',bail:'3/6/9 · Échéance 2025',charges:3600,ca:null,ebe:null,agence:'Michel Simond',ref:'MS-7731',flux:'Très fort',profil:'Jeune / Bureaux',concurrence:8,en:'Jeune, flux dense, bureaux, résidentiel',de:"Petit local efficace avec extraction légère. Parfait pour une première affaire ou un concept compact. Flux piéton dense toute la journée.",co:'Street food, restauration rapide, comptoir',photos:['https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80','https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80']},
+  {id:'L004',t:'Brasserie angle Batignolles',a:17,q:'Batignolles',st:210,sr:160,ex:true,l4:false,te:32,ip:70,fa:10.5,ag:true,lo:108000,pr:860000,et:'Bon',travaux:'Déco à moderniser',dpe:'C',bail:'3/6/9 · Échéance 2028',charges:9000,ca:780000,ebe:115000,agence:'Wall Street Partners',ref:'WSP-2103',flux:'Fort',profil:'Résidentiel aisé',concurrence:3,en:'Résidentiel aisé, bureaux, quartier vivant',de:"Très belle façade d'angle avec 10,5 ml de vitrine. Gros volume, terrasse installée et autorisée. Quartier en forte montée en gamme. Cave de 40 m².",co:'Grande brasserie, café-restaurant, bistrot premium',photos:['https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?w=600&q=80','https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&q=80']},
+  {id:'L005',t:'Cave à manger Marais',a:4,q:'Marais',st:96,sr:82,ex:false,l4:true,te:10,ip:30,fa:5.5,ag:false,lo:52000,pr:290000,et:'Très bon',travaux:'Aucun — mobilier inclus',dpe:'E',bail:'3/6/9 · Échéance 2029',charges:4200,ca:310000,ebe:48000,agence:'BFC Immo',ref:'BFC-0581',flux:'Fort soir',profil:'Tourisme / Destination',concurrence:5,en:'Tourisme, destination, flux soir',de:"Local de charme avec pierre apparente et cave voûtée du 17e. Licence IV en place. Mobilier inclus dans la cession. Vendeur pour raisons personnelles.",co:'Cave à manger, bar à vins naturels, tapas premium',photos:['https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80','https://images.unsplash.com/photo-1416339134316-0e91dc9ded92?w=600&q=80']},
+  {id:'L006',t:'Coffee shop Opéra',a:9,q:'Opéra',st:68,sr:52,ex:false,l4:false,te:8,ip:24,fa:6.8,ag:true,lo:47000,pr:230000,et:'Très bon',travaux:'Aucun',dpe:'C',bail:'3/6/9 · Échéance 2026',charges:3000,ca:240000,ebe:38000,agence:'Point de Vente',ref:'PV-4492',flux:'Très fort journée',profil:'Bureaux / Shopping',concurrence:7,en:'Bureaux, tourisme, shopping',de:"Très fort flux journée dans l'un des quartiers les plus fréquentés. Vitrine large d'angle. Petite préparation possible. Local livré équipé.",co:'Coffee shop, brunch, salon de thé',photos:['https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80','https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80']},
+  {id:'L007',t:'Restaurant premium Madeleine',a:8,q:'Madeleine',st:165,sr:128,ex:true,l4:false,te:18,ip:54,fa:7.9,ag:false,lo:94000,pr:780000,et:'Très bon',travaux:'Aucun',dpe:'B',bail:'3/6/9 · Échéance 2027',charges:7200,ca:890000,ebe:134000,agence:'Guy Hoquet Entreprises',ref:'GHE-1156',flux:'Fort midi',profil:'Luxe / Affaires',concurrence:4,en:'Bureaux, luxe, tourisme',de:"Emplacement qualitatif dans l'un des quartiers les plus huppés. Extraction conforme aux normes. Local livré en très bon état. Fort potentiel déjeuner affaires.",co:"Restaurant d'affaires, gastronomique, brasserie premium",photos:['https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80','https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80']},
+  {id:'L008',t:'Bar festif Oberkampf',a:11,q:'Oberkampf',st:120,sr:95,ex:false,l4:true,te:14,ip:38,fa:5.9,ag:false,lo:61000,pr:420000,et:'Bon',travaux:'Acoustique à traiter',dpe:'D',bail:'3/6/9 · Échéance 2026',charges:5000,ca:380000,ebe:52000,agence:'Michel Simond',ref:'MS-8820',flux:'Fort soir',profil:'Sortie / Nuit',concurrence:9,en:'Quartier de nuit, destination soir',de:"Exploitation bar évidente dans le quartier le plus vivant de Paris le soir. Licence IV en place. Terrasse autorisée jusqu'à minuit.",co:'Bar à cocktails, tapas-bar, bar festif',photos:['https://images.unsplash.com/photo-1575444758702-4a6b9222336e?w=600&q=80','https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80']},
 ];
 
-let userProfile = {};
-let currentCardIdx = 0;
-let favs = [];
-let chatStep = 0;
-let recognition = null;
-let micOn = false;
-let currentView = 'splash';
+// ===== STATE =====
+let UP = {}, chatStep = 0, CUR_IDX = 0, favs = [], fromView = 'swipe', CUR_L = null, gPhotoIdx = 0, micOn = false, recognition = null;
 
-const chatFlow = [
-  { ai: "Bonjour ! Je suis votre assistant FondsMatch. 👋\n\nQuel type d'établissement souhaitez-vous ouvrir à Paris ?", placeholder: "Ex : restaurant, bar à vins, coffee shop…" },
-  { ai: "Parfait ! Dans quels arrondissements cherchez-vous ? Et quelle surface souhaitez-vous (en m²) ?", placeholder: "Ex : Paris centre, 2e 3e 9e, 100 à 150 m²…" },
-  { ai: "Quel est votre budget de reprise (prix de cession) et votre loyer maximum annuel ?", placeholder: "Ex : max 600 000 € de reprise, loyer max 75 000 €/an…" },
-  { ai: "Dernière question : quels sont vos critères indispensables et ceux qui sont rédhibitoires ?", placeholder: "Ex : extraction obligatoire, terrasse souhaitée, pas de travaux lourds…" },
+const CHAT = [
+  {ai:"Bonjour ! Je suis votre assistant FondsMatch. 👋\n\nQuel type d'établissement souhaitez-vous ouvrir à Paris ?",ph:"Ex : restaurant, bar à vins, coffee shop…"},
+  {ai:"Parfait ! Dans quels arrondissements cherchez-vous ? Et quelle surface souhaitez-vous (en m²) ?",ph:"Ex : Paris 2e, 3e, 9e — entre 100 et 150 m²"},
+  {ai:"Quel est votre budget de reprise et votre loyer maximum annuel ?",ph:"Ex : max 600 000 € de reprise, loyer max 75 000 €/an"},
+  {ai:"Dernière question : quels critères sont indispensables, et qu'est-ce qui est rédhibitoire ?",ph:"Ex : extraction obligatoire, terrasse souhaitée, pas de gros travaux"},
 ];
 
 // ===== NAVIGATION =====
-function goView(name) {
-  const views = ['splash','chat','profil','swipe','list','detail','contact'];
-  views.forEach(v => {
+const VIEWS = ['splash','chat','profil','swipe','list','detail','contact'];
+function goView(n) {
+  VIEWS.forEach(v => {
     const el = document.getElementById('v-'+v);
     if (!el) return;
-    if (v === name) { el.classList.remove('hidden','hidden-left'); }
-    else if (views.indexOf(v) < views.indexOf(name)) { el.classList.remove('hidden'); el.classList.add('hidden-left'); }
-    else { el.classList.remove('hidden-left'); el.classList.add('hidden'); }
+    const ni = VIEWS.indexOf(n), vi = VIEWS.indexOf(v);
+    el.classList.toggle('hidden', v !== n);
+    if (v !== n) el.classList.toggle('slide-left', vi < ni);
+    else el.classList.remove('slide-left');
   });
-  currentView = name;
-  const showNav = ['swipe','list','detail','contact','profil'].includes(name);
-  document.getElementById('bottom-nav').style.display = showNav ? 'flex' : 'none';
-  if (name === 'swipe') renderCurrentCard();
-  if (name === 'profil') renderProfil();
-  if (name === 'chat' && chatStep === 0) initChat();
+  const showNav = ['swipe','list','detail','contact','profil'].includes(n);
+  document.getElementById('bnav').style.display = showNav ? 'flex' : 'none';
+  if (n === 'swipe') renderCard();
+  if (n === 'profil') renderProfil();
+  if (n === 'chat' && chatStep === 0) initChat();
 }
 
-function navTo(name, el) {
-  document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
+function bnav(name, idx) {
+  document.querySelectorAll('.bn').forEach((b,i) => b.classList.toggle('on', i === idx));
   if (name === 'swipe') goView('swipe');
-  else if (name === 'profil') goView('profil');
-  else toast('Fonctionnalité à venir dans la prochaine version');
+  else if (name === 'contact') goView('contact');
+  else showToast('Bientôt disponible');
+}
+
+function switchMode(m) {
+  ['vts','vts2'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.toggle('on', m==='swipe'); });
+  ['vtl','vtl2'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.toggle('on', m==='list'); });
+  if (m === 'swipe') goView('swipe');
+  else { renderList(); goView('list'); }
 }
 
 // ===== CHAT =====
 function initChat() {
-  chatStep = 0;
-  document.getElementById('chat-messages').innerHTML = '';
-  addAiMessage(chatFlow[0].ai);
-  document.getElementById('chat-input').placeholder = chatFlow[0].placeholder;
+  chatStep = 0; document.getElementById('cmsgs').innerHTML = '';
+  addAI(CHAT[0].ai); document.getElementById('cinput').placeholder = CHAT[0].ph;
 }
 
-function addAiMessage(text) {
-  const msgs = document.getElementById('chat-messages');
-  const typing = document.createElement('div');
-  typing.className = 'msg msg-ai';
-  typing.innerHTML = '<div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
-  msgs.appendChild(typing);
-  msgs.scrollTop = msgs.scrollHeight;
+function addAI(txt) {
+  const el = document.getElementById('cmsgs');
+  const t = document.createElement('div'); t.className = 'msg msg-ai';
+  t.innerHTML = '<div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
+  el.appendChild(t); el.scrollTop = el.scrollHeight;
+  setTimeout(() => { t.innerHTML = `<div class="bubble">${txt.replace(/\n/g,'<br>')}</div><div class="msg-t">Maintenant</div>`; el.scrollTop = el.scrollHeight; }, 850);
+}
+
+function addUser(txt) {
+  const el = document.getElementById('cmsgs');
+  const m = document.createElement('div'); m.className = 'msg msg-user';
+  m.innerHTML = `<div class="bubble">${txt}</div><div class="msg-t">Vous</div>`;
+  el.appendChild(m); el.scrollTop = el.scrollHeight;
+}
+
+function send() {
+  const inp = document.getElementById('cinput');
+  const txt = inp.value.trim(); if (!txt) return;
+  addUser(txt); inp.value = ''; inp.style.height = '';
+  parse(txt, chatStep); chatStep++;
+  updateProg();
   setTimeout(() => {
-    typing.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">Maintenant</div>`;
-    msgs.scrollTop = msgs.scrollHeight;
-  }, 900);
-}
-
-function addUserMessage(text) {
-  const msgs = document.getElementById('chat-messages');
-  const m = document.createElement('div');
-  m.className = 'msg msg-user';
-  m.innerHTML = `<div class="msg-bubble">${text}</div><div class="msg-time">Vous</div>`;
-  msgs.appendChild(m);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function sendMessage() {
-  const inp = document.getElementById('chat-input');
-  const txt = inp.value.trim();
-  if (!txt) return;
-  addUserMessage(txt);
-  inp.value = '';
-  inp.style.height = '';
-  processAnswer(txt, chatStep);
-  chatStep++;
-  updateProgress();
-  setTimeout(() => {
-    if (chatStep < chatFlow.length) {
-      addAiMessage(chatFlow[chatStep].ai);
-      document.getElementById('chat-input').placeholder = chatFlow[chatStep].placeholder;
-    } else {
-      addAiMessage("Excellent ! J'ai bien compris votre projet. Je construis votre profil et cherche les meilleures annonces… 🔍");
-      setTimeout(() => buildProfile(), 1800);
-    }
+    if (chatStep < CHAT.length) { addAI(CHAT[chatStep].ai); document.getElementById('cinput').placeholder = CHAT[chatStep].ph; }
+    else { addAI("Excellent ! Je construis votre profil et recherche les meilleures annonces… 🔍"); setTimeout(buildProfile, 1800); }
   }, 1000);
 }
 
-function processAnswer(txt, step) {
+function parse(txt, step) {
   const t = txt.toLowerCase();
-  if (step === 0) userProfile.concept = txt;
-  if (step === 1) {
-    userProfile.zones = txt;
-    const sM = txt.match(/(\d+)\s*[àa]\s*(\d+)/);
-    if (sM) { userProfile.surfMin = parseInt(sM[1]); userProfile.surfMax = parseInt(sM[2]); }
-  }
-  if (step === 2) {
-    const bM = txt.match(/(\d[\d\s]*)\s*[€k]/i);
-    const lM = txt.match(/loyer[^0-9]*(\d[\d\s]*)/i);
-    if (bM) userProfile.budget = parseInt(bM[1].replace(/\s/g,''));
-    if (lM) userProfile.loyerMax = parseInt(lM[1].replace(/\s/g,''));
-  }
-  if (step === 3) {
-    userProfile.extraction = t.includes('extraction');
-    userProfile.terrasse = t.includes('terrasse');
-    userProfile.redhibitoires = txt;
-  }
+  if (step === 0) UP.concept = txt;
+  if (step === 1) { UP.zones = txt; const m = txt.match(/(\d+)\s*[àa]\s*(\d+)/); if(m){UP.surfMin=+m[1];UP.surfMax=+m[2];} }
+  if (step === 2) { const bm=txt.match(/(\d[\d\s]{2,})/g); if(bm&&bm.length>=1)UP.budget=+bm[0].replace(/\s/g,''); if(bm&&bm.length>=2)UP.loyerMax=+bm[1].replace(/\s/g,''); }
+  if (step === 3) { UP.extraction=t.includes('extraction'); UP.terrasse=t.includes('terrasse'); UP.redhibitoires=txt; }
 }
 
-function updateProgress() {
-  const cps = document.querySelectorAll('.cp');
-  cps.forEach((cp, i) => cp.classList.toggle('done', i <= chatStep));
-}
+function updateProg() { document.querySelectorAll('.cp').forEach((c,i)=>c.classList.toggle('done',i<=chatStep)); }
 
 function buildProfile() {
-  if (!userProfile.surfMin) userProfile.surfMin = 80;
-  if (!userProfile.surfMax) userProfile.surfMax = 160;
-  if (!userProfile.loyerMax) userProfile.loyerMax = 80000;
-  if (!userProfile.budget) userProfile.budget = 600000;
-  const count = LISTINGS.filter(l => {
-    if (userProfile.extraction && !l.ex) return false;
-    if (userProfile.terrasse && l.te < 6) return false;
-    if (l.lo > (userProfile.loyerMax || 80000) * 1.3) return false;
-    return true;
-  }).length;
-  document.getElementById('match-num').textContent = count || LISTINGS.length;
+  if (!UP.surfMin) UP.surfMin=80; if (!UP.surfMax) UP.surfMax=180;
+  if (!UP.loyerMax) UP.loyerMax=80000; if (!UP.budget) UP.budget=600000;
+  document.getElementById('mnb').textContent = DATA.length;
   goView('profil');
 }
 
-function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
-function autoResize(ta) { ta.style.height = ''; ta.style.height = Math.min(ta.scrollHeight, 80) + 'px'; }
+function onKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
+function resize(ta) { ta.style.height=''; ta.style.height=Math.min(ta.scrollHeight,80)+'px'; }
 
 // ===== MIC =====
 function toggleMic() {
-  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRec) { toast('Micro non disponible sur ce navigateur'); return; }
-  if (micOn) { recognition && recognition.stop(); return; }
-  recognition = new SpeechRec();
-  recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = true;
-  recognition.onstart = () => { micOn = true; document.getElementById('mic-btn').classList.add('on'); };
-  recognition.onresult = (e) => {
-    let txt = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) txt += e.results[i][0].transcript;
-    document.getElementById('chat-input').value = txt;
-  };
-  recognition.onend = () => { micOn = false; document.getElementById('mic-btn').classList.remove('on'); };
+  const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+  if (!SR) { showToast('Micro non disponible'); return; }
+  if (micOn) { recognition&&recognition.stop(); return; }
+  recognition = new SR(); recognition.lang='fr-FR'; recognition.continuous=false; recognition.interimResults=true;
+  recognition.onstart=()=>{micOn=true;document.getElementById('micb').classList.add('on')};
+  recognition.onresult=(e)=>{let t='';for(let i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;document.getElementById('cinput').value=t;};
+  recognition.onend=()=>{micOn=false;document.getElementById('micb').classList.remove('on')};
   recognition.start();
 }
 
 // ===== PROFIL =====
 function renderProfil() {
-  const g = document.getElementById('crit-grid');
-  const t = document.getElementById('crit-tech');
-  g.innerHTML = `
-    <div class="crit-card"><div class="crit-k">Concept</div><div class="crit-v">${userProfile.concept || 'Restaurant'}</div></div>
-    <div class="crit-card"><div class="crit-k">Zones</div><div class="crit-v">${userProfile.zones || 'Paris centre'}</div></div>
-    <div class="crit-card"><div class="crit-k">Surface</div><div class="crit-v">${userProfile.surfMin||80}–${userProfile.surfMax||160} m²</div></div>
-    <div class="crit-card"><div class="crit-k">Budget reprise</div><div class="crit-v">${((userProfile.budget||600000)/1000).toFixed(0)}k €</div></div>
-    <div class="crit-card"><div class="crit-k">Loyer max</div><div class="crit-v">${((userProfile.loyerMax||80000)/1000).toFixed(0)}k €/an</div></div>
-  `;
-  t.innerHTML = `
-    <div class="crit-card"><div class="crit-k">Extraction</div><div class="crit-v">${userProfile.extraction ? '<span class="pill-g">Obligatoire</span>' : '<span class="pill-gr">Optionnelle</span>'}</div></div>
-    <div class="crit-card"><div class="crit-k">Terrasse</div><div class="crit-v">${userProfile.terrasse ? '<span class="pill-g">Souhaitée</span>' : '<span class="pill-gr">Optionnelle</span>'}</div></div>
-    <div class="crit-card"><div class="crit-k">Flux cible</div><div class="crit-v">Midi + soir</div></div>
-  `;
-  if (userProfile.redhibitoires) {
-    document.getElementById('crit-rh').textContent = userProfile.redhibitoires;
-    document.getElementById('crit-rh-section').style.display = 'block';
-  } else {
-    document.getElementById('crit-rh-section').style.display = 'none';
-  }
+  document.getElementById('cg1').innerHTML = [
+    ['Concept', UP.concept||'Restaurant'],
+    ['Zones', UP.zones||'Paris centre'],
+    ['Surface', `${UP.surfMin||80}–${UP.surfMax||180} m²`],
+    ['Budget', `${((UP.budget||600000)/1000).toFixed(0)}k €`],
+    ['Loyer max', `${((UP.loyerMax||80000)/1000).toFixed(0)}k €/an`],
+  ].map(([k,v])=>`<div class="cc"><div class="cc-k">${k}</div><div class="cc-v">${v}</div></div>`).join('');
+  document.getElementById('cg2').innerHTML = [
+    ['Extraction', UP.extraction?'<span class="pill-g">Obligatoire</span>':'<span class="pill-gr">Optionnelle</span>'],
+    ['Terrasse', UP.terrasse?'<span class="pill-g">Souhaitée</span>':'<span class="pill-gr">Optionnelle</span>'],
+    ['Flux', 'Midi + soir'],
+  ].map(([k,v])=>`<div class="cc"><div class="cc-k">${k}</div><div class="cc-v">${v}</div></div>`).join('');
+  if (UP.redhibitoires) { document.getElementById('rhs').style.display='block'; document.getElementById('rhb').textContent=UP.redhibitoires; }
+  else document.getElementById('rhs').style.display='none';
 }
 
-// ===== VIEW SWITCH (swipe/list) =====
-let currentListingView = 'swipe';
-let detailFromView = 'swipe';
-let currentPhotoIdx = 0;
-let currentDetailListing = null;
-
-function switchView(mode) {
-  currentListingView = mode;
-  if (mode === 'swipe') {
-    document.querySelectorAll('#vt-swipe,#vt-swipe2').forEach(b => b.classList.add('on'));
-    document.querySelectorAll('#vt-list,#vt-list2').forEach(b => b.classList.remove('on'));
-    goView('swipe');
-  } else {
-    document.querySelectorAll('#vt-list,#vt-list2').forEach(b => b.classList.add('on'));
-    document.querySelectorAll('#vt-swipe,#vt-swipe2').forEach(b => b.classList.remove('on'));
-    renderListView();
-    goView('list');
-  }
+// ===== SCORING =====
+function score(l) {
+  let s=50;
+  if (UP.extraction&&l.ex) s+=15; if (UP.extraction&&!l.ex) s-=20;
+  if (UP.terrasse&&l.te>=8) s+=10;
+  if (l.lo<=(UP.loyerMax||80000)) s+=10; else if (l.lo>(UP.loyerMax||80000)*1.3) s-=10;
+  if (l.st>=(UP.surfMin||80)&&l.st<=(UP.surfMax||180)) s+=10;
+  if (l.ag) s+=5; if (l.pr<=(UP.budget||600000)) s+=5;
+  return Math.min(99,Math.max(20,Math.round(s)));
 }
+function scoreCls(s){return s>=75?'high':s>=55?'mid':'low'}
 
-function renderListView() {
-  const sorted = [...LISTINGS].map(l => ({...l, sc: scoreCard(l)})).sort((a,b) => b.sc - a.sc);
-  document.getElementById('list-sub').textContent = `${sorted.length} résultats · triés par pertinence`;
-  document.getElementById('list-scroll').innerHTML = sorted.map(l => {
-    const sc = l.sc;
-    const scCls = sc >= 75 ? 'lsc-high' : sc >= 55 ? 'lsc-mid' : 'lsc-low';
-    const imgHtml = l.photos?.length ? `<img src="${l.photos[0]}" alt="${l.t}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=lcard-img-placeholder><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1\' width=\'40\' height=\'40\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/></svg></div>'">` : '<div class="lcard-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="40" height="40"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>';
-    return `<div class="lcard" onclick="openDetail('${l.id}','list')">
-      <div class="lcard-img">
-        ${imgHtml}
-        <div class="lcard-score ${scCls}">Match ${sc}/100</div>
-        <div class="lcard-fav" onclick="event.stopPropagation();addFavById('${l.id}')">♡</div>
+// ===== SWIPE =====
+function renderCard() {
+  if (CUR_IDX>=DATA.length) {
+    document.getElementById('scmain').innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:280px;gap:10px;"><div style="font-family:Playfair Display,serif;font-size:20px">C\'est tout !</div><div style="font-size:13px;color:var(--gris)">Toutes les annonces ont été vues.</div><button class="btn btn-gold" style="width:180px;margin-top:12px" onclick="CUR_IDX=0;renderCard()">Recommencer</button></div>';
+    return;
+  }
+  const l=DATA[CUR_IDX], sc=score(l), cls=scoreCls(sc);
+  document.getElementById('swcnt').textContent=`${DATA.length-CUR_IDX} annonces`;
+  const img=l.photos?.length?`<img src="${l.photos[0]}" alt="${l.t}" onerror="this.style.display='none'">`:'<div class="sc-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1" width="44" height="44"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
+  document.getElementById('scmain').innerHTML=`
+    <div class="like-ov" id="lov">GARDER ♥</div><div class="nope-ov" id="nov">PASSER ✕</div>
+    <div class="sc-img">${img}<div class="sc-badge sc-badge-${cls}">Match ${sc}/100</div></div>
+    <div class="sc-body">
+      <div class="sc-name">${l.t}</div>
+      <div class="sc-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Paris ${l.a}e · ${l.q}</div>
+      <div class="sc-tags">
+        ${l.ex?'<span class="stag stag-g">Extraction</span>':''}
+        ${l.te>0?`<span class="stag stag-g">Terrasse ${l.te}p</span>`:''}
+        ${l.l4?'<span class="stag stag-g">Licence IV</span>':''}
+        ${l.ag?'<span class="stag stag-n">Angle</span>':''}
+        <span class="stag stag-n">${l.st} m²</span>
       </div>
-      <div class="lcard-body">
-        <div class="lcard-name">${l.t}</div>
-        <div class="lcard-loc">Paris ${l.a}e · ${l.q} · ${l.st} m²</div>
-        <div class="lcard-tags">
-          ${l.ex ? '<span class="stag stag-g">Extraction</span>' : ''}
-          ${l.te > 0 ? `<span class="stag stag-g">Terrasse ${l.te}p</span>` : ''}
-          ${l.l4 ? '<span class="stag stag-g">Licence IV</span>' : ''}
-          ${l.ag ? '<span class="stag stag-n">Angle</span>' : ''}
-        </div>
-        <div class="lcard-nums">
+      <div class="sc-nums">
+        <div class="snum"><div class="snum-v">${(l.pr/1000).toFixed(0)}k€</div><div class="snum-k">Cession</div></div>
+        <div class="snum"><div class="snum-v">${(l.lo/1000).toFixed(0)}k€</div><div class="snum-k">Loyer/an</div></div>
+        <div class="snum"><div class="snum-v">${l.ip>0?l.ip+'pl':'—'}</div><div class="snum-k">Couverts</div></div>
+      </div>
+    </div>`;
+  setupDrag();
+}
+
+function setupDrag() {
+  const card=document.getElementById('scmain'); if(!card) return;
+  let sx=0,sy=0,drag=false;
+  const start=(e)=>{const p=e.touches?.[0]||e;sx=p.clientX;sy=p.clientY;drag=true;card.style.transition='none'};
+  const move=(e)=>{
+    if(!drag)return; const p=e.touches?.[0]||e; const dx=p.clientX-sx,dy=p.clientY-sy;
+    if(Math.abs(dy)>Math.abs(dx)*1.5)return; e.preventDefault();
+    card.style.transform=`translateX(${dx}px) rotate(${dx*.07}deg)`;
+    const lov=document.getElementById('lov'),nov=document.getElementById('nov');
+    if(lov)lov.style.opacity=Math.max(0,dx/70); if(nov)nov.style.opacity=Math.max(0,-dx/70);
+  };
+  const end=(e)=>{
+    if(!drag)return; drag=false; card.style.transition='';
+    const p=e.changedTouches?.[0]||e; const dx=p.clientX-sx;
+    if(dx>80) swipeR(); else if(dx<-80) swipeL();
+    else {card.style.transform='';const lov=document.getElementById('lov'),nov=document.getElementById('nov');if(lov)lov.style.opacity=0;if(nov)nov.style.opacity=0;}
+  };
+  card.addEventListener('mousedown',start); document.addEventListener('mousemove',move); document.addEventListener('mouseup',end);
+  card.addEventListener('touchstart',start,{passive:true}); card.addEventListener('touchmove',move,{passive:false}); card.addEventListener('touchend',end);
+}
+
+function animCard(dir) {
+  const card=document.getElementById('scmain'); if(!card)return;
+  card.style.transition='transform .32s ease,opacity .32s';
+  card.style.transform=`translateX(${dir==='r'?'120%':'-120%'}) rotate(${dir==='r'?14:-14}deg)`;
+  card.style.opacity='0';
+  setTimeout(()=>{card.style.transition='';card.style.transform='';card.style.opacity='';CUR_IDX++;renderCard();},330);
+}
+function swipeL(){animCard('l')}
+function swipeR(){favs.push(DATA[CUR_IDX]);updFav();animCard('r')}
+
+// ===== LIST =====
+function renderList() {
+  const sorted=[...DATA].map(l=>({...l,sc:score(l)})).sort((a,b)=>b.sc-a.sc);
+  document.getElementById('list-sub').textContent=`${sorted.length} résultats · triés par pertinence`;
+  document.getElementById('listscroll').innerHTML=sorted.map(l=>{
+    const cls=scoreCls(l.sc);
+    const img=l.photos?.length?`<img src="${l.photos[0]}" alt="${l.t}" onerror="this.style.display='none'">`:'<div class="lc-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1" width="36" height="36"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>';
+    return `<div class="lcard" onclick="openDetail('${l.id}','list')">
+      <div class="lc-img">${img}<div class="lc-score lcs-${cls}">Match ${l.sc}/100</div><div class="lc-fav" onclick="event.stopPropagation();favById('${l.id}')">♡</div></div>
+      <div class="lc-body">
+        <div class="lc-name">${l.t}</div>
+        <div class="lc-loc">Paris ${l.a}e · ${l.q} · ${l.st} m²</div>
+        <div class="lc-tags">${l.ex?'<span class="stag stag-g">Extraction</span>':''}${l.te>0?`<span class="stag stag-g">Terrasse ${l.te}p</span>`:''}${l.l4?'<span class="stag stag-g">Licence IV</span>':''}${l.ag?'<span class="stag stag-n">Angle</span>':''}</div>
+        <div class="lc-nums">
           <div class="lnum"><div class="lnum-v">${(l.pr/1000).toFixed(0)}k€</div><div class="lnum-k">Cession</div></div>
           <div class="lnum"><div class="lnum-v">${(l.lo/1000).toFixed(0)}k€</div><div class="lnum-k">Loyer/an</div></div>
-          <div class="lnum"><div class="lnum-v">${l.ip > 0 ? l.ip+'pl' : '—'}</div><div class="lnum-k">Couverts</div></div>
+          <div class="lnum"><div class="lnum-v">${l.ip>0?l.ip+'pl':'—'}</div><div class="lnum-k">Couverts</div></div>
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-function openDetail(id, fromView) {
-  const l = LISTINGS.find(x => x.id === id);
-  if (!l) return;
-  currentDetailListing = l;
-  detailFromView = fromView || currentListingView;
-  currentCardIdx = LISTINGS.indexOf(l);
-  currentPhotoIdx = 0;
-  renderDetailFull(l);
+// ===== DETAIL =====
+function openDetail(id, from) {
+  const l=DATA.find(x=>x.id===id); if(!l)return;
+  CUR_L=l; fromView=from||'swipe'; gPhotoIdx=0;
+  renderGallery(l);
+  const sc=score(l), cls=scoreCls(sc);
+  const lbl=sc>=80?'Excellent match':sc>=65?'Très bon match':sc>=50?'Bon match':'Match partiel';
+  document.getElementById('dsr').className=`det-sc-ring dsr-${cls}`;
+  document.getElementById('dsn').className=`det-sc-n dsn-${cls}`; document.getElementById('dsn').textContent=sc;
+  document.getElementById('dslbl').className=`det-sc-lbl det-sc-lbl-${cls}`; document.getElementById('dslbl').textContent=lbl;
+  document.getElementById('dref').textContent=`Réf. ${l.ref} · ${l.agence}`;
+  document.getElementById('dname').textContent=l.t;
+  document.getElementById('dloc').textContent=`Paris ${l.a}e · ${l.q} · ${l.st} m²`;
+  // Reset tabs
+  document.querySelectorAll('.dtab').forEach((t,i)=>t.classList.toggle('on',i===0));
+  document.querySelectorAll('.tab-pane').forEach((p,i)=>p.classList.toggle('on',i===0));
+  renderTabs(l,sc,cls);
   goView('detail');
 }
 
-function backFromDetail() {
-  if (detailFromView === 'list') { goView('list'); }
-  else { goView('swipe'); }
-}
-
-// ===== PHOTO GALLERY =====
 function renderGallery(l) {
-  const gallery = document.getElementById('det-gallery');
-  if (!l.photos || !l.photos.length) {
-    gallery.innerHTML = '<div class="photo-gallery-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="40" height="40"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
-    return;
+  const el=document.getElementById('detgal');
+  if (!l.photos?.length) { el.innerHTML='<div class="det-gallery-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1" width="44" height="44"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>'; return; }
+  let html=`<img src="${l.photos[gPhotoIdx]}" alt="${l.t}" onerror="this.style.display='none'">`;
+  if(l.photos.length>1){
+    html+=`<button class="gal-nav gal-prev" onclick="gNav(-1)">‹</button><button class="gal-nav gal-next" onclick="gNav(1)">›</button>`;
+    html+=`<div class="gal-cnt">${gPhotoIdx+1}/${l.photos.length}</div>`;
+    html+=`<div class="gal-dots">${l.photos.map((_,i)=>`<div class="gal-dot${i===gPhotoIdx?' on':''}" onclick="gNav(${i-gPhotoIdx})"></div>`).join('')}</div>`;
   }
-  const img = document.createElement('img');
-  img.src = l.photos[currentPhotoIdx];
-  img.alt = l.t;
-  img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-  gallery.innerHTML = '';
-  gallery.appendChild(img);
-  if (l.photos.length > 1) {
-    const prev = document.createElement('button');
-    prev.className = 'photo-nav photo-nav-prev';
-    prev.innerHTML = '‹';
-    prev.onclick = prevPhoto;
-    const next = document.createElement('button');
-    next.className = 'photo-nav photo-nav-next';
-    next.innerHTML = '›';
-    next.onclick = nextPhoto;
-    const count = document.createElement('div');
-    count.className = 'photo-count';
-    count.textContent = `${currentPhotoIdx+1}/${l.photos.length}`;
-    const dots = document.createElement('div');
-    dots.className = 'photo-dots';
-    dots.innerHTML = l.photos.map((_,i) => `<div class="photo-dot${i===currentPhotoIdx?' on':''}" onclick="goPhoto(${i})"></div>`).join('');
-    gallery.appendChild(prev);
-    gallery.appendChild(next);
-    gallery.appendChild(count);
-    gallery.appendChild(dots);
-  }
+  el.innerHTML=html;
 }
 
-function prevPhoto() {
-  if (!currentDetailListing?.photos?.length) return;
-  currentPhotoIdx = (currentPhotoIdx - 1 + currentDetailListing.photos.length) % currentDetailListing.photos.length;
-  renderGallery(currentDetailListing);
-}
-function nextPhoto() {
-  if (!currentDetailListing?.photos?.length) return;
-  currentPhotoIdx = (currentPhotoIdx + 1) % currentDetailListing.photos.length;
-  renderGallery(currentDetailListing);
-}
-function goPhoto(i) { currentPhotoIdx = i; renderGallery(currentDetailListing); }
+function gNav(d) { if(!CUR_L?.photos?.length)return; gPhotoIdx=Math.max(0,Math.min(CUR_L.photos.length-1,gPhotoIdx+d)); renderGallery(CUR_L); }
 
-function switchDetTab(idx, el) {
-  document.querySelectorAll('.det-tab').forEach(t => t.classList.remove('on'));
-  document.querySelectorAll('.det-tab-content').forEach(t => t.classList.remove('on'));
-  el.classList.add('on');
-  document.getElementById('dtab-'+idx).classList.add('on');
+function dtab(idx,el){
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on'); document.getElementById('dp'+idx).classList.add('on');
 }
 
-// ===== DETAIL FULL =====
-function renderDetailFull(l) {
-  const sc = scoreCard(l);
-  const scTxt = sc >= 80 ? 'Excellent match' : sc >= 65 ? 'Très bon match' : sc >= 50 ? 'Bon match' : 'Match partiel';
-  document.getElementById('det-score-n').textContent = sc;
-  document.getElementById('det-score-txt').textContent = scTxt;
-  document.getElementById('det-ref').textContent = `Réf. ${l.ref || l.id} · ${l.agence || ''}`;
-  document.getElementById('det-name').textContent = l.t;
-  document.getElementById('det-loc').textContent = `Paris ${l.a}e · ${l.q} · ${l.st} m²`;
-  renderGallery(l);
+function renderTabs(l,sc,cls){
+  const lm2=Math.round(l.lo/l.st);
+  const rcaVal=l.ca?Math.round((l.lo/l.ca)*100):null;
+  const flux=l.flux==='Très fort'?92:l.flux?.includes('Fort')?72:55;
 
   // Tab 0 — Infos
-  document.getElementById('det-data').innerHTML = `
-    <div class="det-section">
-      <div class="det-s-title">Le local</div>
-      <div class="stat-row"><span class="stat-k">Surface totale</span><span class="stat-v">${l.st} m²</span></div>
-      <div class="stat-row"><span class="stat-k">Surface RDC</span><span class="stat-v">${l.sr || Math.round(l.st*0.8)} m²</span></div>
-      <div class="stat-row"><span class="stat-k">Couverts intérieur</span><span class="stat-v">${l.ip > 0 ? l.ip+' places' : '—'}</span></div>
-      <div class="stat-row"><span class="stat-k">Terrasse</span><span class="stat-v">${l.te > 0 ? l.te+' places' : 'Aucune'}</span></div>
-      <div class="stat-row"><span class="stat-k">Façade</span><span class="stat-v">${l.fa} ml${l.ag?' · Angle':''}</span></div>
-      <div class="stat-row"><span class="stat-k">Extraction</span><span class="stat-v ${l.ex?'stat-v-green':''}">${l.ex ? '✓ Présente' : '✗ Absente'}</span></div>
-      <div class="stat-row"><span class="stat-k">Licence IV</span><span class="stat-v ${l.l4?'stat-v-green':''}">${l.l4 ? '✓ Oui' : '✗ Non'}</span></div>
-      <div class="stat-row"><span class="stat-k">État général</span><span class="stat-v">${l.et}</span></div>
-      <div class="stat-row"><span class="stat-k">Travaux</span><span class="stat-v">${l.travaux || '—'}</span></div>
-      <div class="stat-row"><span class="stat-k">DPE</span><span class="stat-v"><span class="dpe-badge dpe-${l.dpe||'C'}">${l.dpe||'C'}</span></span></div>
+  document.getElementById('dp0').innerHTML=`
+    <div class="tp-section"><div class="tp-s-t">Le local</div>
+      <div class="tp-row"><span class="tp-k">Surface totale</span><span class="tp-v">${l.st} m²</span></div>
+      <div class="tp-row"><span class="tp-k">Surface RDC</span><span class="tp-v">${l.sr} m²</span></div>
+      <div class="tp-row"><span class="tp-k">Couverts intérieur</span><span class="tp-v">${l.ip>0?l.ip+' places':'—'}</span></div>
+      <div class="tp-row"><span class="tp-k">Terrasse</span><span class="tp-v">${l.te>0?l.te+' places':'Aucune'}</span></div>
+      <div class="tp-row"><span class="tp-k">Façade</span><span class="tp-v">${l.fa} ml${l.ag?' · Angle':''}</span></div>
+      <div class="tp-row"><span class="tp-k">Extraction</span><span class="tp-v ${l.ex?'tp-v-green':''}">${l.ex?'✓ Présente':'✗ Absente'}</span></div>
+      <div class="tp-row"><span class="tp-k">Licence IV</span><span class="tp-v ${l.l4?'tp-v-green':''}">${l.l4?'✓ Oui':'✗ Non'}</span></div>
+      <div class="tp-row"><span class="tp-k">État</span><span class="tp-v">${l.et}</span></div>
+      <div class="tp-row"><span class="tp-k">Travaux</span><span class="tp-v">${l.travaux}</span></div>
+      <div class="tp-row"><span class="tp-k">DPE</span><span class="tp-v"><span class="dpe dpe-${l.dpe}">${l.dpe}</span></span></div>
     </div>
-    <div class="det-section">
-      <div class="det-s-title">Bail</div>
-      <div class="stat-row"><span class="stat-k">Type</span><span class="stat-v">${l.bail || '3/6/9'}</span></div>
-      <div class="stat-row"><span class="stat-k">Agence</span><span class="stat-v">${l.agence || '—'}</span></div>
+    <div class="tp-section"><div class="tp-s-t">Bail & agence</div>
+      <div class="tp-row"><span class="tp-k">Bail</span><span class="tp-v">${l.bail}</span></div>
+      <div class="tp-row"><span class="tp-k">Agence</span><span class="tp-v">${l.agence}</span></div>
+      <div class="tp-row"><span class="tp-k">Référence</span><span class="tp-v">${l.ref}</span></div>
     </div>
-    <div class="det-section">
-      <div class="det-s-title">Description</div>
-      <div style="font-size:13px;color:var(--gris);line-height:1.65;">${l.de}</div>
-    </div>
-    <div class="det-section">
-      <div class="det-s-title">Concepts adaptés</div>
-      <div style="font-size:13px;color:var(--gris);">${l.co}</div>
-    </div>`;
+    <div class="tp-section"><div class="tp-s-t">Description</div><p style="font-size:13px;color:var(--gris);line-height:1.65">${l.de}</p></div>
+    <div class="tp-section"><div class="tp-s-t">Concepts adaptés</div><p style="font-size:13px;color:var(--gris)">${l.co}</p></div>`;
 
   // Tab 1 — Finances
-  const loyer_m2 = Math.round(l.lo / l.st);
-  const ratio_ca = l.ca ? Math.round((l.lo / l.ca) * 100) : null;
-  document.getElementById('det-finances').innerHTML = `
-    <div class="det-section">
-      <div class="finance-grid">
-        <div class="fin-card"><div class="fin-k">Prix cession</div><div class="fin-v">${(l.pr/1000).toFixed(0)}k €</div></div>
-        <div class="fin-card"><div class="fin-k">Loyer annuel</div><div class="fin-v">${(l.lo/1000).toFixed(0)}k €</div></div>
-        <div class="fin-card"><div class="fin-k">Charges/an</div><div class="fin-v">${l.charges ? (l.charges/1000).toFixed(0)+'k €' : '—'}</div></div>
-        <div class="fin-card"><div class="fin-k">Loyer/m²/an</div><div class="fin-v ${loyer_m2 < 600 ? 'fin-v-green' : ''}">${loyer_m2} €</div></div>
-        ${l.ca ? `<div class="fin-card"><div class="fin-k">CA déclaré</div><div class="fin-v">${(l.ca/1000).toFixed(0)}k €</div></div>` : ''}
-        ${l.ebe ? `<div class="fin-card"><div class="fin-k">EBE</div><div class="fin-v fin-v-green">${(l.ebe/1000).toFixed(0)}k €</div></div>` : ''}
+  document.getElementById('dp1').innerHTML=`
+    <div class="tp-section">
+      <div class="fin-grid">
+        <div class="fin-c"><div class="fin-k">Prix cession</div><div class="fin-v">${(l.pr/1000).toFixed(0)}k €</div></div>
+        <div class="fin-c"><div class="fin-k">Loyer/an</div><div class="fin-v">${(l.lo/1000).toFixed(0)}k €</div></div>
+        <div class="fin-c"><div class="fin-k">Charges/an</div><div class="fin-v">${(l.charges/1000).toFixed(0)}k €</div></div>
+        <div class="fin-c"><div class="fin-k">Loyer/m²/an</div><div class="fin-v ${lm2<600?'fin-v-g':''}">${lm2} €</div></div>
+        ${l.ca?`<div class="fin-c"><div class="fin-k">CA déclaré</div><div class="fin-v">${(l.ca/1000).toFixed(0)}k €</div></div>`:''}
+        ${l.ebe?`<div class="fin-c"><div class="fin-k">EBE</div><div class="fin-v fin-v-g">${(l.ebe/1000).toFixed(0)}k €</div></div>`:''}
       </div>
     </div>
-    <div class="det-section">
-      <div class="det-s-title">Analyse</div>
-      ${ratio_ca ? `<div class="stat-row"><span class="stat-k">Ratio loyer/CA</span><span class="stat-v ${ratio_ca < 15 ? 'stat-v-green' : ''}">${ratio_ca}% ${ratio_ca < 15 ? '✓ Bon' : ratio_ca < 20 ? '⚠ Correct' : '⚠ Élevé'}</span></div>` : ''}
-      <div class="stat-row"><span class="stat-k">Loyer/m²</span><span class="stat-v">${loyer_m2} €/m²/an · ${loyer_m2 < 500 ? 'Sous le marché' : loyer_m2 < 700 ? 'Dans le marché' : 'Au-dessus du marché'}</span></div>
-      ${l.ebe && l.pr ? `<div class="stat-row"><span class="stat-k">Multiple EBE</span><span class="stat-v">${(l.pr/l.ebe).toFixed(1)}x EBE</span></div>` : ''}
+    <div class="tp-section"><div class="tp-s-t">Analyse</div>
+      ${rcaVal?`<div class="tp-row"><span class="tp-k">Ratio loyer/CA</span><span class="tp-v ${rcaVal<15?'tp-v-green':''}">${rcaVal}% — ${rcaVal<15?'Bon ✓':rcaVal<20?'Correct':'Élevé ⚠'}</span></div>`:''}
+      <div class="tp-row"><span class="tp-k">Loyer/m²</span><span class="tp-v">${lm2<500?'Sous marché ✓':lm2<700?'Dans le marché':'Au-dessus marché'}</span></div>
+      ${l.ebe&&l.pr?`<div class="tp-row"><span class="tp-k">Multiple EBE</span><span class="tp-v">${(l.pr/l.ebe).toFixed(1)}x EBE</span></div>`:''}
     </div>`;
 
   // Tab 2 — Quartier
-  const fluxVal = l.flux === 'Très fort' ? 92 : l.flux?.includes('Fort') ? 72 : 55;
-  document.getElementById('det-quartier').innerHTML = `
-    <div class="det-section">
-      <div class="map-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span>Paris ${l.a}e · ${l.q}</span>
+  document.getElementById('dp2').innerHTML=`
+    <div class="tp-section">
+      <div class="map-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Paris ${l.a}e · ${l.q}</span></div>
+      <div class="flux-bar">
+        <div class="flux-lbl"><span style="color:var(--gris);font-size:12px">Flux piéton</span><span style="font-weight:500;color:var(--vert);font-size:12px">${l.flux}</span></div>
+        <div class="flux-track"><div class="flux-fill" style="width:${flux}%"></div></div>
       </div>
-      <div class="det-s-title">Indicateurs</div>
-      <div style="margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--gris)">Flux piéton</span><span style="font-weight:500;color:var(--vert)">${l.flux || 'Fort'}</span></div>
-        <div style="height:6px;background:var(--creme2);border-radius:6px;overflow:hidden;"><div style="height:6px;width:${fluxVal}%;background:var(--vert);border-radius:6px;"></div></div>
-      </div>
-      <div class="stat-row"><span class="stat-k">Profil client dominant</span><span class="stat-v">${l.profil || l.en.split(',')[0]}</span></div>
-      <div class="stat-row"><span class="stat-k">Concurrence directe</span><span class="stat-v">${l.concurrence || '—'} établissements / 200m</span></div>
-      <div class="stat-row"><span class="stat-k">Environnement</span><span class="stat-v" style="text-align:right;max-width:55%;font-size:12px;">${l.en}</span></div>
+      <div class="tp-row"><span class="tp-k">Profil client</span><span class="tp-v">${l.profil}</span></div>
+      <div class="tp-row"><span class="tp-k">Concurrence / 200m</span><span class="tp-v">${l.concurrence} établissements</span></div>
+      <div class="tp-row"><span class="tp-k">Environnement</span><span class="tp-v" style="text-align:right;font-size:12px;max-width:56%">${l.en}</span></div>
     </div>`;
 
   // Tab 3 — Match
-  const pts = [];
-  if (l.ex && userProfile.extraction) pts.push({t:'Extraction présente — critère clé ✓', g:true});
-  if (!l.ex && userProfile.extraction) pts.push({t:'Extraction absente — point critique', g:false});
-  if (l.te >= 8 && userProfile.terrasse) pts.push({t:`Terrasse ${l.te} places — correspond ✓`, g:true});
-  if (l.lo <= (userProfile.loyerMax||80000)) pts.push({t:'Loyer dans votre budget ✓', g:true});
-  else pts.push({t:`Loyer de ${(l.lo/1000).toFixed(0)}k€ au-dessus de votre cible`, g:false});
-  if (l.st >= (userProfile.surfMin||80) && l.st <= (userProfile.surfMax||160)) pts.push({t:`${l.st} m² — surface idéale ✓`, g:true});
-  if (l.ag) pts.push({t:'Emplacement d\'angle — visibilité forte ✓', g:true});
-  if (l.pr <= (userProfile.budget||600000)) pts.push({t:'Prix dans votre budget ✓', g:true});
-  else pts.push({t:`Prix de ${(l.pr/1000).toFixed(0)}k€ au-dessus de votre budget`, g:false});
-  document.getElementById('det-match').innerHTML = `
-    <div class="det-section">
-      <div style="display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-        <div style="width:70px;height:70px;border-radius:50%;background:${sc>=75?'var(--vert-clair)':sc>=55?'var(--or-clair)':'var(--rouge-clair)'};display:flex;flex-direction:column;align-items:center;justify-content:center;">
-          <div style="font-size:24px;font-weight:500;color:${sc>=75?'var(--vert)':sc>=55?'var(--or)':'var(--rouge)'};">${sc}</div>
-          <div style="font-size:10px;color:var(--gris);">/100</div>
-        </div>
-      </div>
-      ${pts.map(p => `<div class="match-point ${p.g?'mp-green':'mp-amber'}">${p.t}</div>`).join('')}
-    </div>`;
+  const pts=[];
+  if(l.ex&&UP.extraction)pts.push({t:'Extraction présente — critère clé ✓',g:true});
+  if(!l.ex&&UP.extraction)pts.push({t:'Extraction absente — point critique',g:false});
+  if(l.te>=8&&UP.terrasse)pts.push({t:`Terrasse ${l.te} places ✓`,g:true});
+  if(l.lo<=(UP.loyerMax||80000))pts.push({t:'Loyer dans votre budget ✓',g:true});
+  else pts.push({t:`Loyer de ${(l.lo/1000).toFixed(0)}k€ au-dessus de votre cible`,g:false});
+  if(l.st>=(UP.surfMin||80)&&l.st<=(UP.surfMax||180))pts.push({t:`${l.st} m² — surface idéale ✓`,g:true});
+  if(l.ag)pts.push({t:"Emplacement d'angle — forte visibilité ✓",g:true});
+  if(l.pr<=(UP.budget||600000))pts.push({t:'Prix dans votre budget ✓',g:true});
+  else pts.push({t:`Prix de ${(l.pr/1000).toFixed(0)}k€ au-dessus de votre budget`,g:false});
+  const bgC=sc>=75?'var(--vert-clair)':sc>=55?'var(--or-clair)':'var(--rouge-clair)';
+  const fc=sc>=75?'var(--vert)':sc>=55?'var(--ambre)':'var(--rouge)';
+  document.getElementById('dp3').innerHTML=`
+    <div class="tp-section" style="text-align:center;padding-top:8px">
+      <div class="sc-big" style="background:${bgC}"><div style="font-size:26px;font-weight:500;color:${fc};line-height:1">${sc}</div><div style="font-size:10px;color:var(--gris)">/100</div></div>
+    </div>
+    <div class="tp-section">${pts.map(p=>`<div class="mp ${p.g?'mp-g':'mp-a'}">${p.t}</div>`).join('')}</div>`;
 }
 
-// ===== SWIPE =====
-function scoreCard(l) {
-  let s = 50;
-  if (userProfile.extraction && l.ex) s += 15;
-  if (userProfile.extraction && !l.ex) s -= 20;
-  if (userProfile.terrasse && l.te >= 8) s += 10;
-  if (l.lo <= (userProfile.loyerMax||80000)) s += 10;
-  if (l.st >= (userProfile.surfMin||80) && l.st <= (userProfile.surfMax||160)) s += 10;
-  if (l.ag) s += 5;
-  return Math.min(99, Math.max(20, s));
-}
+function backDetail() { goView(fromView==='list'?'list':'swipe'); }
 
-function renderCurrentCard() {
-  if (currentCardIdx >= LISTINGS.length) {
-    document.getElementById('scard-main').innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:12px;"><div style="font-family:Playfair Display,serif;font-size:22px;">C\'est tout !</div><div style="font-size:13px;color:var(--gris);">Vous avez vu toutes les annonces.</div><button class="big-btn btn-gold" style="margin-top:16px;width:200px;" onclick="currentCardIdx=0;renderCurrentCard()">Recommencer</button></div>';
-    return;
-  }
-  const l = LISTINGS[currentCardIdx];
-  const sc = scoreCard(l);
-  document.getElementById('swipe-count').textContent = `${LISTINGS.length - currentCardIdx} annonces`;
-  const imgHtml = l.photos?.length
-    ? `<img src="${l.photos[0]}" alt="${l.t}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.innerHTML='<div class=scard-img-bg></div><div class=scard-img-icon><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1\' width=\'56\' height=\'56\'><path d=\'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\'/></svg></div>'">`
-    : `<div class="scard-img-bg"></div><div class="scard-img-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="56" height="56"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>`;
-  document.getElementById('scard-main').innerHTML = `
-    <div class="swipe-like-overlay" id="like-overlay">GARDER ♥</div>
-    <div class="swipe-nope-overlay" id="nope-overlay">PASSER ✕</div>
-    <div class="scard-img" style="cursor:pointer;" onclick="openDetail('${l.id}','swipe')">${imgHtml}<div class="scard-score-badge">Match <span>${sc}</span>/100</div></div>
-    <div class="scard-body" style="cursor:pointer;" onclick="openDetail('${l.id}','swipe')">
-      <div class="scard-name">${l.t}</div>
-      <div class="scard-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Paris ${l.a}e · ${l.q}</div>
-      <div class="scard-tags">
-        ${l.ex ? '<span class="stag stag-g">Extraction</span>' : ''}
-        ${l.te > 0 ? `<span class="stag stag-g">Terrasse ${l.te}p</span>` : ''}
-        ${l.l4 ? '<span class="stag stag-g">Licence IV</span>' : ''}
-        ${l.ag ? '<span class="stag stag-n">Angle</span>' : ''}
-        <span class="stag stag-n">${l.st} m²</span>
-      </div>
-      <div class="scard-nums">
-        <div class="snum"><div class="snum-v">${(l.pr/1000).toFixed(0)}k€</div><div class="snum-k">Cession</div></div>
-        <div class="snum"><div class="snum-v">${(l.lo/1000).toFixed(0)}k€</div><div class="snum-k">Loyer/an</div></div>
-        <div class="snum"><div class="snum-v">${l.ip > 0 ? l.ip+'pl' : '—'}</div><div class="snum-k">Couverts</div></div>
-      </div>
-    </div>`;
-  setupSwipe();
-  if (currentCardIdx + 1 < LISTINGS.length) renderGhosts();
-}
+// ===== FAVS =====
+function addFav() { if(CUR_L){favs.push(CUR_L);updFav();showToast('Ajouté aux favoris ♥');} }
+function favById(id) { const l=DATA.find(x=>x.id===id);if(l){favs.push(l);updFav();showToast('Ajouté aux favoris ♥');} }
+function updFav() { const b=document.getElementById('favbadge'),c=document.getElementById('favcnt');if(b)b.style.display=favs.length?'block':'none';if(c)c.textContent=favs.length; }
 
-function renderGhosts() {
-  ['scard-ghost','scard-ghost2'].forEach((id, i) => {
-    const el = document.getElementById(id);
-    const l = LISTINGS[currentCardIdx + i + 1];
-    if (el && l) el.style.minHeight = '200px';
-  });
-}
-
-function swipeLeft() { animateCard('left'); }
-function swipeRight() { favs.push(LISTINGS[currentCardIdx]); updateFavBadge(); animateCard('right'); }
-
-function animateCard(dir) {
-  const card = document.getElementById('scard-main');
-  card.style.transition = 'transform 0.35s ease, opacity 0.35s';
-  card.style.transform = `translateX(${dir==='right'?'120%':'-120%'}) rotate(${dir==='right'?15:-15}deg)`;
-  card.style.opacity = '0';
-  setTimeout(() => {
-    card.style.transition = '';
-    card.style.transform = '';
-    card.style.opacity = '';
-    currentCardIdx++;
-    renderCurrentCard();
-  }, 350);
-}
-
-function setupSwipe() {
-  const card = document.getElementById('scard-main');
-  if (!card) return;
-  let startX = 0, startY = 0, isDragging = false;
-  const onStart = (e) => { const p = e.touches?.[0] || e; startX = p.clientX; startY = p.clientY; isDragging = true; card.style.transition = 'none'; };
-  const onMove = (e) => {
-    if (!isDragging) return;
-    const p = e.touches?.[0] || e; const dx = p.clientX - startX; const dy = p.clientY - startY;
-    if (Math.abs(dy) > Math.abs(dx) * 1.5) return;
-    e.preventDefault();
-    const rot = dx * 0.08;
-    card.style.transform = `translateX(${dx}px) rotate(${rot}deg)`;
-    const lo = document.getElementById('like-overlay'), no = document.getElementById('nope-overlay');
-    if (lo) lo.style.opacity = Math.max(0, dx / 80);
-    if (no) no.style.opacity = Math.max(0, -dx / 80);
-  };
-  const onEnd = (e) => {
-    if (!isDragging) return; isDragging = false;
-    const p = e.changedTouches?.[0] || e; const dx = p.clientX - startX;
-    card.style.transition = '';
-    if (dx > 80) swipeRight();
-    else if (dx < -80) swipeLeft();
-    else { card.style.transform = ''; const lo = document.getElementById('like-overlay'), no = document.getElementById('nope-overlay'); if(lo) lo.style.opacity=0; if(no) no.style.opacity=0; }
-  };
-  card.addEventListener('mousedown', onStart); document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onEnd);
-  card.addEventListener('touchstart', onStart, {passive:true}); card.addEventListener('touchmove', onMove, {passive:false}); card.addEventListener('touchend', onEnd);
-}
-
-// ===== DETAIL (legacy redirect) =====
-function renderDetail() { if (currentDetailListing) renderDetailFull(currentDetailListing); }
-function addFav() { if(currentDetailListing) { favs.push(currentDetailListing); updateFavBadge(); toast('Ajouté aux favoris ♥'); } }
-function addFavById(id) { const l = LISTINGS.find(x=>x.id===id); if(l) { favs.push(l); updateFavBadge(); toast('Ajouté aux favoris ♥'); } }
+// ===== CONTACT =====
 function goContact() {
-  const l = currentDetailListing || LISTINGS[currentCardIdx] || LISTINGS[0];
-  document.getElementById('mail-annonce').textContent = l.t;
-  document.getElementById('mail-body').textContent = `Un acheteur qualifié est intéressé par votre annonce "${l.t}" (réf. ${l.ref||l.id}). Concept : ${userProfile.concept || 'restauration'}. Budget confirmé. Coordonnées disponibles sur demande via FondsMatch.`;
-  goView('contact');
-  toast('Demande envoyée ✓');
+  const l=CUR_L||DATA[CUR_IDX]||DATA[0];
+  document.getElementById('mail-ag').textContent=l.agence;
+  document.getElementById('mail-ref').textContent=l.t;
+  document.getElementById('mail-body').textContent=`Un acheteur qualifié est intéressé par votre annonce "${l.t}" (réf. ${l.ref}). Concept : ${UP.concept||'restauration'}. Budget confirmé. Coordonnées disponibles sur demande via FondsMatch.`;
+  goView('contact'); showToast('Demande envoyée ✓');
 }
 
-function addFav() { const l = currentDetailListing || LISTINGS[currentCardIdx]; if(l){favs.push(l);updateFavBadge();toast('Ajouté aux favoris ♥');} }
-function updateFavBadge() {
-  const b = document.getElementById('fav-badge'), c = document.getElementById('fav-count');
-  if (b) b.style.display = favs.length > 0 ? 'block' : 'none';
-  if (c) c.textContent = favs.length;
-}
-function showFavs() { toast(`${favs.length} favori${favs.length > 1 ? 's' : ''} — interface favoris à venir`); }
+// ===== TOAST =====
+function showToast(msg) { const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400); }
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('on');
-  setTimeout(() => t.classList.remove('on'), 2500);
-}
-
-// Fix Android keyboard pushing content up
-const chatTextarea = document.getElementById('chat-input');
-if (chatTextarea) {
-  chatTextarea.addEventListener('focus', () => {
-    setTimeout(() => {
-      const msgs = document.getElementById('chat-messages');
-      if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    }, 350);
-  });
-}
-
-// Handle visual viewport resize (Android keyboard)
+// ===== ANDROID FIX =====
 if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', () => {
-    const app = document.getElementById('app');
-    if (app) app.style.height = window.visualViewport.height + 'px';
+  window.visualViewport.addEventListener('resize',()=>{
+    const a=document.getElementById('app');if(a)a.style.height=window.visualViewport.height+'px';
   });
 }
+document.getElementById('cinput')?.addEventListener('focus',()=>{
+  setTimeout(()=>{const m=document.getElementById('cmsgs');if(m)m.scrollTop=m.scrollHeight;},350);
+});
 
 // INIT
 goView('splash');
-setTimeout(() => { document.querySelector('.splash-dots .splash-dot:nth-child(2)').classList.add('on'); }, 800);
 </script>
 </body>
 </html>
