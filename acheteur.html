@@ -234,6 +234,72 @@ body { height: 100%; min-height: 100vh; min-height: -webkit-fill-available; over
   body { background: #1a1a1a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
   .app { height: 90vh; max-height: 820px; border-radius: 40px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.5); }
 }
+
+/* VIEW TOGGLE */
+.view-toggle { display: flex; gap: 4px; background: var(--creme); border-radius: 20px; padding: 3px; }
+.vt-btn { border: none; background: none; padding: 5px 12px; border-radius: 16px; font-size: 12px; font-family: inherit; cursor: pointer; color: var(--gris); transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
+.vt-btn.on { background: var(--blanc); color: var(--noir); font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.vt-btn svg { width: 13px; height: 13px; }
+
+/* LIST VIEW */
+#v-list { background: var(--creme); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.list-header { padding: 14px 16px 10px; display: flex; align-items: center; justify-content: space-between; background: var(--creme); position: sticky; top: 0; z-index: 10; border-bottom: 0.5px solid var(--creme2); }
+.list-title { font-family: 'Playfair Display', serif; font-size: 16px; }
+.list-sub { font-size: 11px; color: var(--gris); }
+.list-scroll { padding: 10px 12px 24px; display: flex; flex-direction: column; gap: 10px; }
+.lcard { background: var(--blanc); border-radius: var(--rlg); overflow: hidden; cursor: pointer; transition: transform 0.15s; }
+.lcard:active { transform: scale(0.99); }
+.lcard-img { height: 160px; position: relative; overflow: hidden; }
+.lcard-img img { width: 100%; height: 100%; object-fit: cover; }
+.lcard-img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--creme2) 0%, #d4cfc4 100%); display: flex; align-items: center; justify-content: center; }
+.lcard-score { position: absolute; top: 10px; left: 10px; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 500; }
+.lsc-high { background: var(--vert); color: white; }
+.lsc-mid { background: var(--or); color: var(--noir); }
+.lsc-low { background: var(--gris); color: white; }
+.lcard-fav { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
+.lcard-body { padding: 12px 14px; }
+.lcard-name { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 3px; line-height: 1.25; }
+.lcard-loc { font-size: 12px; color: var(--gris); margin-bottom: 8px; }
+.lcard-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.lcard-nums { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.lnum { background: var(--creme); border-radius: var(--r); padding: 6px 8px; text-align: center; }
+.lnum-v { font-size: 13px; font-weight: 500; }
+.lnum-k { font-size: 10px; color: var(--gris); }
+
+/* DETAIL PHOTOS */
+.photo-gallery { position: relative; height: 220px; overflow: hidden; }
+.photo-gallery img { width: 100%; height: 100%; object-fit: cover; }
+.photo-gallery-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--creme2) 0%, #d4cfc4 100%); display: flex; align-items: center; justify-content: center; }
+.photo-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+.photo-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.2s; }
+.photo-dot.on { background: white; }
+.photo-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+.photo-nav-prev { left: 10px; }
+.photo-nav-next { right: 10px; }
+.photo-count { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); color: white; font-size: 11px; padding: 2px 8px; border-radius: 20px; }
+
+/* DETAIL ENRICHED */
+.det-tabs { display: flex; border-bottom: 0.5px solid var(--creme2); padding: 0 16px; }
+.det-tab { font-size: 13px; padding: 10px 14px; cursor: pointer; color: var(--gris); border-bottom: 2px solid transparent; margin-bottom: -0.5px; transition: all 0.15s; white-space: nowrap; }
+.det-tab.on { color: var(--noir); border-bottom-color: var(--noir); font-weight: 500; }
+.det-tab-content { display: none; }
+.det-tab-content.on { display: block; }
+.stat-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--creme); font-size: 13px; }
+.stat-row:last-child { border: none; }
+.stat-k { color: var(--gris); }
+.stat-v { font-weight: 500; }
+.stat-v-green { color: var(--vert); font-weight: 500; }
+.dpe-badge { display: inline-block; width: 28px; height: 20px; border-radius: 3px; text-align: center; line-height: 20px; font-size: 12px; font-weight: 500; color: white; }
+.dpe-A { background: #009B3A; } .dpe-B { background: #51B848; } .dpe-C { background: #A9C83D; color: #333; }
+.dpe-D { background: #F6C800; color: #333; } .dpe-E { background: #F4901B; } .dpe-F { background: #EE3323; } .dpe-G { background: #C31E26; }
+.finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.fin-card { background: var(--creme); border-radius: var(--r); padding: 10px 12px; }
+.fin-k { font-size: 10px; color: var(--gris); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.fin-v { font-size: 16px; font-weight: 500; }
+.fin-v-green { color: var(--vert); }
+.map-placeholder { height: 120px; background: linear-gradient(135deg, #e8f4ea 0%, #d4ecd8 100%); border-radius: var(--r); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; }
+.map-placeholder svg { width: 28px; height: 28px; color: var(--vert); }
+.map-placeholder span { font-size: 12px; color: var(--vert); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -320,10 +386,17 @@ body { height: 100%; min-height: 100vh; min-height: -webkit-fill-available; over
   <div class="view hidden" id="v-swipe">
     <div class="swipe-header">
       <div class="sh-logo">Fonds<span>Match</span></div>
-      <div class="sh-count" id="swipe-count">38 annonces</div>
-      <div class="sh-filter">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      <div class="view-toggle">
+        <button class="vt-btn on" id="vt-swipe" onclick="switchView('swipe')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="9" height="18" rx="2"/><rect x="13" y="3" width="9" height="18" rx="2"/></svg>
+          Swipe
+        </button>
+        <button class="vt-btn" id="vt-list" onclick="switchView('list')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Liste
+        </button>
       </div>
+      <div class="sh-count" id="swipe-count">8 annonces</div>
     </div>
     <div class="swipe-area" id="swipe-area">
       <div class="scard scard-ghost2" id="scard-ghost2"></div>
@@ -347,31 +420,68 @@ body { height: 100%; min-height: 100vh; min-height: -webkit-fill-available; over
     <div class="swipe-hint">← Passer · Info · Garder →</div>
   </div>
 
+  <!-- LIST VIEW -->
+  <div class="view hidden" id="v-list">
+    <div class="list-header">
+      <div>
+        <div class="list-title">Annonces</div>
+        <div class="list-sub" id="list-sub">8 résultats · triés par pertinence</div>
+      </div>
+      <div class="view-toggle">
+        <button class="vt-btn" id="vt-swipe2" onclick="switchView('swipe')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="9" height="18" rx="2"/><rect x="13" y="3" width="9" height="18" rx="2"/></svg>
+          Swipe
+        </button>
+        <button class="vt-btn on" id="vt-list2" onclick="switchView('list')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Liste
+        </button>
+      </div>
+    </div>
+    <div class="list-scroll" id="list-scroll"></div>
+  </div>
+
   <!-- DETAIL -->
   <div class="view hidden" id="v-detail">
-    <div class="det-hero">
-      <button class="det-back" onclick="goView('swipe')">
+    <div class="photo-gallery" id="det-gallery">
+      <div class="photo-gallery-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="40" height="40"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <button class="photo-nav photo-nav-prev" onclick="prevPhoto()" id="photo-prev" style="display:none">‹</button>
+      <button class="photo-nav photo-nav-next" onclick="nextPhoto()" id="photo-next" style="display:none">›</button>
+      <div class="photo-dots" id="photo-dots"></div>
+      <div class="photo-count" id="photo-count" style="display:none"></div>
+    </div>
+    <div class="det-hero" style="padding:12px 16px;">
+      <button class="det-back" onclick="backFromDetail()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
         Retour
       </button>
       <div class="det-score-row">
         <div class="det-score-circle"><div class="det-score-n" id="det-score-n">89</div><div class="det-score-d">/100</div></div>
-        <div class="det-score-txt">Très bon match</div>
+        <div>
+          <div class="det-score-txt" id="det-score-txt">Très bon match</div>
+          <div style="font-size:11px;color:var(--gris);" id="det-ref"></div>
+        </div>
       </div>
       <div class="det-name" id="det-name">Restaurant terrasse Montorgueil</div>
       <div class="det-loc" id="det-loc">Paris 2e · Montorgueil · 140 m²</div>
     </div>
-    <div class="det-body">
-      <div class="det-section">
-        <div class="det-s-title">Données clés</div>
+    <div class="det-tabs">
+      <div class="det-tab on" onclick="switchDetTab(0,this)">Infos</div>
+      <div class="det-tab" onclick="switchDetTab(1,this)">Finances</div>
+      <div class="det-tab" onclick="switchDetTab(2,this)">Quartier</div>
+      <div class="det-tab" onclick="switchDetTab(3,this)">Match</div>
+    </div>
+    <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+      <div class="det-body det-tab-content on" id="dtab-0">
         <div id="det-data"></div>
       </div>
-      <div class="det-section">
-        <div class="det-s-title">Environnement du quartier</div>
-        <div id="det-env"></div>
+      <div class="det-body det-tab-content" id="dtab-1">
+        <div id="det-finances"></div>
       </div>
-      <div class="det-section">
-        <div class="det-s-title">Pourquoi ça matche</div>
+      <div class="det-body det-tab-content" id="dtab-2">
+        <div id="det-quartier"></div>
+      </div>
+      <div class="det-body det-tab-content" id="dtab-3">
         <div id="det-match"></div>
       </div>
     </div>
@@ -454,14 +564,30 @@ body { height: 100%; min-height: 100vh; min-height: -webkit-fill-available; over
 <script>
 // ===== DATA =====
 const LISTINGS = [
-  { id:'L001', t:'Restaurant terrasse Montorgueil', a:2, q:'Montorgueil', st:140, ex:true, l4:false, te:24, ip:48, fa:7.2, ag:true, lo:72000, pr:540000, et:'bon', en:'Bureaux, tourisme, rue très active', de:'Extraction existante, salle rectangulaire, cave saine. Emplacement d\'angle à fort flux mixte midi et soir.', co:'Brasserie moderne, bistrot premium', flux:'Très fort', profil:'Bureaux + tourisme', concurrence:4 },
-  { id:'L002', t:'Bistro Saint-Germain', a:6, q:'Saint-Germain', st:130, ex:true, l4:false, te:12, ip:42, fa:6.4, ag:false, lo:88000, pr:690000, et:'très bon', en:'CSP+, tourisme qualitatif, soirée active', de:'Emplacement élégant, clientèle de destination, fort potentiel ticket moyen élevé.', co:'Gastronomique, bistronomie', flux:'Fort', profil:'CSP+ / Destination', concurrence:6 },
-  { id:'L003', t:'Local street food République', a:10, q:'République', st:74, ex:true, l4:false, te:0, ip:22, fa:4.8, ag:false, lo:34000, pr:145000, et:'correct', en:'Jeune, flux dense, bureaux, résidentiel', de:'Petit local efficace avec extraction légère. Parfait pour première affaire.', co:'Street food, restauration rapide', flux:'Très fort', profil:'Jeune / Bureaux', concurrence:8 },
-  { id:'L004', t:'Brasserie angle Batignolles', a:17, q:'Batignolles', st:210, ex:true, l4:false, te:32, ip:70, fa:10.5, ag:true, lo:108000, pr:860000, et:'bon', en:'Résidentiel aisé, bureaux, quartier vivant', de:'Très belle façade d\'angle, gros volume, terrasse installée.', co:'Grande brasserie, café-restaurant', flux:'Fort', profil:'Résidentiel aisé', concurrence:3 },
-  { id:'L005', t:'Cave à manger Marais', a:4, q:'Marais', st:96, ex:false, l4:true, te:10, ip:30, fa:5.5, ag:false, lo:52000, pr:290000, et:'très bon', en:'Tourisme, destination, flux soir', de:'Local de charme avec pierre apparente et cave voûtée. Licence IV en place.', co:'Cave à manger, bar à vins', flux:'Fort soir', profil:'Tourisme / Destination', concurrence:5 },
-  { id:'L006', t:'Coffee shop Opéra', a:9, q:'Opéra', st:68, ex:false, l4:false, te:8, ip:24, fa:6.8, ag:true, lo:47000, pr:230000, et:'très bon', en:'Bureaux, tourisme, shopping', de:'Très fort flux journée. Vitrine large d\'angle.', co:'Coffee shop, brunch, salon de thé', flux:'Très fort journée', profil:'Bureaux / Shopping', concurrence:7 },
-  { id:'L007', t:'Restaurant premium Madeleine', a:8, q:'Madeleine', st:165, ex:true, l4:false, te:18, ip:54, fa:7.9, ag:false, lo:94000, pr:780000, et:'très bon', en:'Bureaux, luxe, tourisme', de:'Emplacement qualitatif, clientèle CSP+, extraction conforme.', co:'Restaurant d\'affaires, gastronomique', flux:'Fort midi', profil:'Luxe / Affaires', concurrence:4 },
-  { id:'L008', t:'Bar festif Oberkampf', a:11, q:'Oberkampf', st:120, ex:false, l4:true, te:14, ip:38, fa:5.9, ag:false, lo:61000, pr:420000, et:'bon', en:'Quartier de nuit, destination soir', de:'Exploitation bar évidente. Fort potentiel cocktails et tapas.', co:'Bar à cocktails, tapas-bar', flux:'Fort soir', profil:'Sortie / Nuit', concurrence:9 },
+  { id:'L001', t:'Restaurant terrasse Montorgueil', a:2, q:'Montorgueil', st:140, ex:true, l4:false, te:24, ip:48, fa:7.2, ag:true, lo:72000, pr:540000, et:'bon', en:'Bureaux, tourisme, rue très active', de:'Extraction existante, salle rectangulaire, cave saine. Emplacement d\'angle à fort flux mixte midi et soir. Local livré propre avec cuisine équipée partielle. Bail 3/6/9 en cours, échéance 2027.', co:'Brasserie moderne, bistrot premium', flux:'Très fort', profil:'Bureaux + tourisme', concurrence:4,
+    photos:['https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80','https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80','https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80'],
+    bail:'3/6/9 · Échéance 2027', dpe:'C', charges:6000, ca:480000, ebe:72000, travaux:'Rafraîchissement déco', agence:'Wall Street Partners', ref:'WSP-2024-1847' },
+  { id:'L002', t:'Bistro Saint-Germain', a:6, q:'Saint-Germain', st:130, ex:true, l4:false, te:12, ip:42, fa:6.4, ag:false, lo:88000, pr:690000, et:'très bon', en:'CSP+, tourisme qualitatif, soirée active', de:'Emplacement élégant dans l\'une des rues les plus recherchées du 6e. Clientèle de destination, fort potentiel ticket moyen élevé. Local livré en parfait état avec cuisine complète.', co:'Gastronomique, bistronomie', flux:'Fort', profil:'CSP+ / Destination', concurrence:6,
+    photos:['https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80','https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&q=80'],
+    bail:'3/6/9 · Échéance 2026', dpe:'B', charges:8500, ca:620000, ebe:95000, travaux:'Aucun', agence:'Guy Hoquet Entreprises', ref:'GHE-2024-0392' },
+  { id:'L003', t:'Local street food République', a:10, q:'République', st:74, ex:true, l4:false, te:0, ip:22, fa:4.8, ag:false, lo:34000, pr:145000, et:'correct', en:'Jeune, flux dense, bureaux, résidentiel', de:'Petit local efficace avec extraction légère. Parfait pour première affaire ou concept compact. Flux piéton dense toute la journée. Cuisine à compléter.', co:'Street food, restauration rapide', flux:'Très fort', profil:'Jeune / Bureaux', concurrence:8,
+    photos:['https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80','https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80'],
+    bail:'3/6/9 · Échéance 2025', dpe:'D', charges:3600, ca:null, ebe:null, travaux:'Cuisine à compléter', agence:'Michel Simond', ref:'MS-2024-7731' },
+  { id:'L004', t:'Brasserie angle Batignolles', a:17, q:'Batignolles', st:210, ex:true, l4:false, te:32, ip:70, fa:10.5, ag:true, lo:108000, pr:860000, et:'bon', en:'Résidentiel aisé, bureaux, quartier vivant', de:'Très belle façade d\'angle avec 10,5 ml de vitrine. Gros volume, terrasse installée et autorisée. Quartier en forte montée en gamme. Configuration idéale pour une grande brasserie. Cave de 40 m².', co:'Grande brasserie, café-restaurant', flux:'Fort', profil:'Résidentiel aisé', concurrence:3,
+    photos:['https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?w=600&q=80','https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&q=80','https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80'],
+    bail:'3/6/9 · Échéance 2028', dpe:'C', charges:9000, ca:780000, ebe:115000, travaux:'Déco à moderniser', agence:'Wall Street Partners', ref:'WSP-2024-2103' },
+  { id:'L005', t:'Cave à manger Marais', a:4, q:'Marais', st:96, ex:false, l4:true, te:10, ip:30, fa:5.5, ag:false, lo:52000, pr:290000, et:'très bon', en:'Tourisme, destination, flux soir', de:'Local de charme exceptionnel avec pierre apparente et cave voûtée du 17e. Licence IV en place. Mobilier inclus dans la cession. Concept cave à manger naturels en place, vendeur pour raisons personnelles.', co:'Cave à manger, bar à vins', flux:'Fort soir', profil:'Tourisme / Destination', concurrence:5,
+    photos:['https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80','https://images.unsplash.com/photo-1416339134316-0e91dc9ded92?w=600&q=80'],
+    bail:'3/6/9 · Échéance 2029', dpe:'E', charges:4200, ca:310000, ebe:48000, travaux:'Aucun — mobilier inclus', agence:'BFC Immo', ref:'BFC-2024-0581' },
+  { id:'L006', t:'Coffee shop Opéra', a:9, q:'Opéra', st:68, ex:false, l4:false, te:8, ip:24, fa:6.8, ag:true, lo:47000, pr:230000, et:'très bon', en:'Bureaux, tourisme, shopping', de:'Très fort flux journée dans l\'un des quartiers les plus fréquentés de Paris. Vitrine large d\'angle. Petite préparation possible. Clientèle bureaux et touristes abondante. Local livré équipé.', co:'Coffee shop, brunch, salon de thé', flux:'Très fort journée', profil:'Bureaux / Shopping', concurrence:7,
+    photos:['https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80','https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80'],
+    bail:'3/6/9 · Échéance 2026', dpe:'C', charges:3000, ca:240000, ebe:38000, travaux:'Aucun', agence:'Point de Vente', ref:'PV-2024-4492' },
+  { id:'L007', t:'Restaurant premium Madeleine', a:8, q:'Madeleine', st:165, ex:true, l4:false, te:18, ip:54, fa:7.9, ag:false, lo:94000, pr:780000, et:'très bon', en:'Bureaux, luxe, tourisme', de:'Emplacement qualitatif dans l\'un des quartiers les plus huppés de Paris. Extraction conforme aux normes 2024. Local livré en très bon état. Fort potentiel déjeuner affaires et dîner premium.', co:'Restaurant d\'affaires, gastronomique', flux:'Fort midi', profil:'Luxe / Affaires', concurrence:4,
+    photos:['https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80','https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80','https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600&q=80'],
+    bail:'3/6/9 · Échéance 2027', dpe:'B', charges:7200, ca:890000, ebe:134000, travaux:'Aucun', agence:'Guy Hoquet Entreprises', ref:'GHE-2024-1156' },
+  { id:'L008', t:'Bar festif Oberkampf', a:11, q:'Oberkampf', st:120, ex:false, l4:true, te:14, ip:38, fa:5.9, ag:false, lo:61000, pr:420000, et:'bon', en:'Quartier de nuit, destination soir', de:'Exploitation bar évidente dans le quartier le plus vivant de Paris le soir. Licence IV en place. Acoustique à traiter. Fort potentiel cocktails et tapas. Terrasse autorisée jusqu\'à minuit.', co:'Bar à cocktails, tapas-bar', flux:'Fort soir', profil:'Sortie / Nuit', concurrence:9,
+    photos:['https://images.unsplash.com/photo-1575444758702-4a6b9222336e?w=600&q=80','https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80'],
+    bail:'3/6/9 · Échéance 2026', dpe:'D', charges:5000, ca:380000, ebe:52000, travaux:'Acoustique', agence:'Michel Simond', ref:'MS-2024-8820' },
 ];
 
 let userProfile = {};
@@ -481,7 +607,7 @@ const chatFlow = [
 
 // ===== NAVIGATION =====
 function goView(name) {
-  const views = ['splash','chat','profil','swipe','detail','contact'];
+  const views = ['splash','chat','profil','swipe','list','detail','contact'];
   views.forEach(v => {
     const el = document.getElementById('v-'+v);
     if (!el) return;
@@ -490,11 +616,10 @@ function goView(name) {
     else { el.classList.remove('hidden-left'); el.classList.add('hidden'); }
   });
   currentView = name;
-  const showNav = ['swipe','detail','contact','profil'].includes(name);
+  const showNav = ['swipe','list','detail','contact','profil'].includes(name);
   document.getElementById('bottom-nav').style.display = showNav ? 'flex' : 'none';
   if (name === 'swipe') renderCurrentCard();
   if (name === 'profil') renderProfil();
-  if (name === 'detail') renderDetail();
   if (name === 'chat' && chatStep === 0) initChat();
 }
 
@@ -642,6 +767,230 @@ function renderProfil() {
   }
 }
 
+// ===== VIEW SWITCH (swipe/list) =====
+let currentListingView = 'swipe';
+let detailFromView = 'swipe';
+let currentPhotoIdx = 0;
+let currentDetailListing = null;
+
+function switchView(mode) {
+  currentListingView = mode;
+  if (mode === 'swipe') {
+    document.querySelectorAll('#vt-swipe,#vt-swipe2').forEach(b => b.classList.add('on'));
+    document.querySelectorAll('#vt-list,#vt-list2').forEach(b => b.classList.remove('on'));
+    goView('swipe');
+  } else {
+    document.querySelectorAll('#vt-list,#vt-list2').forEach(b => b.classList.add('on'));
+    document.querySelectorAll('#vt-swipe,#vt-swipe2').forEach(b => b.classList.remove('on'));
+    renderListView();
+    goView('list');
+  }
+}
+
+function renderListView() {
+  const sorted = [...LISTINGS].map(l => ({...l, sc: scoreCard(l)})).sort((a,b) => b.sc - a.sc);
+  document.getElementById('list-sub').textContent = `${sorted.length} résultats · triés par pertinence`;
+  document.getElementById('list-scroll').innerHTML = sorted.map(l => {
+    const sc = l.sc;
+    const scCls = sc >= 75 ? 'lsc-high' : sc >= 55 ? 'lsc-mid' : 'lsc-low';
+    const imgHtml = l.photos?.length ? `<img src="${l.photos[0]}" alt="${l.t}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=lcard-img-placeholder><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1\' width=\'40\' height=\'40\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/></svg></div>'">` : '<div class="lcard-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="40" height="40"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>';
+    return `<div class="lcard" onclick="openDetail('${l.id}','list')">
+      <div class="lcard-img">
+        ${imgHtml}
+        <div class="lcard-score ${scCls}">Match ${sc}/100</div>
+        <div class="lcard-fav" onclick="event.stopPropagation();addFavById('${l.id}')">♡</div>
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-name">${l.t}</div>
+        <div class="lcard-loc">Paris ${l.a}e · ${l.q} · ${l.st} m²</div>
+        <div class="lcard-tags">
+          ${l.ex ? '<span class="stag stag-g">Extraction</span>' : ''}
+          ${l.te > 0 ? `<span class="stag stag-g">Terrasse ${l.te}p</span>` : ''}
+          ${l.l4 ? '<span class="stag stag-g">Licence IV</span>' : ''}
+          ${l.ag ? '<span class="stag stag-n">Angle</span>' : ''}
+        </div>
+        <div class="lcard-nums">
+          <div class="lnum"><div class="lnum-v">${(l.pr/1000).toFixed(0)}k€</div><div class="lnum-k">Cession</div></div>
+          <div class="lnum"><div class="lnum-v">${(l.lo/1000).toFixed(0)}k€</div><div class="lnum-k">Loyer/an</div></div>
+          <div class="lnum"><div class="lnum-v">${l.ip > 0 ? l.ip+'pl' : '—'}</div><div class="lnum-k">Couverts</div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openDetail(id, fromView) {
+  const l = LISTINGS.find(x => x.id === id);
+  if (!l) return;
+  currentDetailListing = l;
+  detailFromView = fromView || currentListingView;
+  currentCardIdx = LISTINGS.indexOf(l);
+  currentPhotoIdx = 0;
+  renderDetailFull(l);
+  goView('detail');
+}
+
+function backFromDetail() {
+  if (detailFromView === 'list') { goView('list'); }
+  else { goView('swipe'); }
+}
+
+// ===== PHOTO GALLERY =====
+function renderGallery(l) {
+  const gallery = document.getElementById('det-gallery');
+  if (!l.photos || !l.photos.length) {
+    gallery.innerHTML = '<div class="photo-gallery-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="40" height="40"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
+    return;
+  }
+  const img = document.createElement('img');
+  img.src = l.photos[currentPhotoIdx];
+  img.alt = l.t;
+  img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+  gallery.innerHTML = '';
+  gallery.appendChild(img);
+  if (l.photos.length > 1) {
+    const prev = document.createElement('button');
+    prev.className = 'photo-nav photo-nav-prev';
+    prev.innerHTML = '‹';
+    prev.onclick = prevPhoto;
+    const next = document.createElement('button');
+    next.className = 'photo-nav photo-nav-next';
+    next.innerHTML = '›';
+    next.onclick = nextPhoto;
+    const count = document.createElement('div');
+    count.className = 'photo-count';
+    count.textContent = `${currentPhotoIdx+1}/${l.photos.length}`;
+    const dots = document.createElement('div');
+    dots.className = 'photo-dots';
+    dots.innerHTML = l.photos.map((_,i) => `<div class="photo-dot${i===currentPhotoIdx?' on':''}" onclick="goPhoto(${i})"></div>`).join('');
+    gallery.appendChild(prev);
+    gallery.appendChild(next);
+    gallery.appendChild(count);
+    gallery.appendChild(dots);
+  }
+}
+
+function prevPhoto() {
+  if (!currentDetailListing?.photos?.length) return;
+  currentPhotoIdx = (currentPhotoIdx - 1 + currentDetailListing.photos.length) % currentDetailListing.photos.length;
+  renderGallery(currentDetailListing);
+}
+function nextPhoto() {
+  if (!currentDetailListing?.photos?.length) return;
+  currentPhotoIdx = (currentPhotoIdx + 1) % currentDetailListing.photos.length;
+  renderGallery(currentDetailListing);
+}
+function goPhoto(i) { currentPhotoIdx = i; renderGallery(currentDetailListing); }
+
+function switchDetTab(idx, el) {
+  document.querySelectorAll('.det-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.det-tab-content').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('dtab-'+idx).classList.add('on');
+}
+
+// ===== DETAIL FULL =====
+function renderDetailFull(l) {
+  const sc = scoreCard(l);
+  const scTxt = sc >= 80 ? 'Excellent match' : sc >= 65 ? 'Très bon match' : sc >= 50 ? 'Bon match' : 'Match partiel';
+  document.getElementById('det-score-n').textContent = sc;
+  document.getElementById('det-score-txt').textContent = scTxt;
+  document.getElementById('det-ref').textContent = `Réf. ${l.ref || l.id} · ${l.agence || ''}`;
+  document.getElementById('det-name').textContent = l.t;
+  document.getElementById('det-loc').textContent = `Paris ${l.a}e · ${l.q} · ${l.st} m²`;
+  renderGallery(l);
+
+  // Tab 0 — Infos
+  document.getElementById('det-data').innerHTML = `
+    <div class="det-section">
+      <div class="det-s-title">Le local</div>
+      <div class="stat-row"><span class="stat-k">Surface totale</span><span class="stat-v">${l.st} m²</span></div>
+      <div class="stat-row"><span class="stat-k">Surface RDC</span><span class="stat-v">${l.sr || Math.round(l.st*0.8)} m²</span></div>
+      <div class="stat-row"><span class="stat-k">Couverts intérieur</span><span class="stat-v">${l.ip > 0 ? l.ip+' places' : '—'}</span></div>
+      <div class="stat-row"><span class="stat-k">Terrasse</span><span class="stat-v">${l.te > 0 ? l.te+' places' : 'Aucune'}</span></div>
+      <div class="stat-row"><span class="stat-k">Façade</span><span class="stat-v">${l.fa} ml${l.ag?' · Angle':''}</span></div>
+      <div class="stat-row"><span class="stat-k">Extraction</span><span class="stat-v ${l.ex?'stat-v-green':''}">${l.ex ? '✓ Présente' : '✗ Absente'}</span></div>
+      <div class="stat-row"><span class="stat-k">Licence IV</span><span class="stat-v ${l.l4?'stat-v-green':''}">${l.l4 ? '✓ Oui' : '✗ Non'}</span></div>
+      <div class="stat-row"><span class="stat-k">État général</span><span class="stat-v">${l.et}</span></div>
+      <div class="stat-row"><span class="stat-k">Travaux</span><span class="stat-v">${l.travaux || '—'}</span></div>
+      <div class="stat-row"><span class="stat-k">DPE</span><span class="stat-v"><span class="dpe-badge dpe-${l.dpe||'C'}">${l.dpe||'C'}</span></span></div>
+    </div>
+    <div class="det-section">
+      <div class="det-s-title">Bail</div>
+      <div class="stat-row"><span class="stat-k">Type</span><span class="stat-v">${l.bail || '3/6/9'}</span></div>
+      <div class="stat-row"><span class="stat-k">Agence</span><span class="stat-v">${l.agence || '—'}</span></div>
+    </div>
+    <div class="det-section">
+      <div class="det-s-title">Description</div>
+      <div style="font-size:13px;color:var(--gris);line-height:1.65;">${l.de}</div>
+    </div>
+    <div class="det-section">
+      <div class="det-s-title">Concepts adaptés</div>
+      <div style="font-size:13px;color:var(--gris);">${l.co}</div>
+    </div>`;
+
+  // Tab 1 — Finances
+  const loyer_m2 = Math.round(l.lo / l.st);
+  const ratio_ca = l.ca ? Math.round((l.lo / l.ca) * 100) : null;
+  document.getElementById('det-finances').innerHTML = `
+    <div class="det-section">
+      <div class="finance-grid">
+        <div class="fin-card"><div class="fin-k">Prix cession</div><div class="fin-v">${(l.pr/1000).toFixed(0)}k €</div></div>
+        <div class="fin-card"><div class="fin-k">Loyer annuel</div><div class="fin-v">${(l.lo/1000).toFixed(0)}k €</div></div>
+        <div class="fin-card"><div class="fin-k">Charges/an</div><div class="fin-v">${l.charges ? (l.charges/1000).toFixed(0)+'k €' : '—'}</div></div>
+        <div class="fin-card"><div class="fin-k">Loyer/m²/an</div><div class="fin-v ${loyer_m2 < 600 ? 'fin-v-green' : ''}">${loyer_m2} €</div></div>
+        ${l.ca ? `<div class="fin-card"><div class="fin-k">CA déclaré</div><div class="fin-v">${(l.ca/1000).toFixed(0)}k €</div></div>` : ''}
+        ${l.ebe ? `<div class="fin-card"><div class="fin-k">EBE</div><div class="fin-v fin-v-green">${(l.ebe/1000).toFixed(0)}k €</div></div>` : ''}
+      </div>
+    </div>
+    <div class="det-section">
+      <div class="det-s-title">Analyse</div>
+      ${ratio_ca ? `<div class="stat-row"><span class="stat-k">Ratio loyer/CA</span><span class="stat-v ${ratio_ca < 15 ? 'stat-v-green' : ''}">${ratio_ca}% ${ratio_ca < 15 ? '✓ Bon' : ratio_ca < 20 ? '⚠ Correct' : '⚠ Élevé'}</span></div>` : ''}
+      <div class="stat-row"><span class="stat-k">Loyer/m²</span><span class="stat-v">${loyer_m2} €/m²/an · ${loyer_m2 < 500 ? 'Sous le marché' : loyer_m2 < 700 ? 'Dans le marché' : 'Au-dessus du marché'}</span></div>
+      ${l.ebe && l.pr ? `<div class="stat-row"><span class="stat-k">Multiple EBE</span><span class="stat-v">${(l.pr/l.ebe).toFixed(1)}x EBE</span></div>` : ''}
+    </div>`;
+
+  // Tab 2 — Quartier
+  const fluxVal = l.flux === 'Très fort' ? 92 : l.flux?.includes('Fort') ? 72 : 55;
+  document.getElementById('det-quartier').innerHTML = `
+    <div class="det-section">
+      <div class="map-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Paris ${l.a}e · ${l.q}</span>
+      </div>
+      <div class="det-s-title">Indicateurs</div>
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--gris)">Flux piéton</span><span style="font-weight:500;color:var(--vert)">${l.flux || 'Fort'}</span></div>
+        <div style="height:6px;background:var(--creme2);border-radius:6px;overflow:hidden;"><div style="height:6px;width:${fluxVal}%;background:var(--vert);border-radius:6px;"></div></div>
+      </div>
+      <div class="stat-row"><span class="stat-k">Profil client dominant</span><span class="stat-v">${l.profil || l.en.split(',')[0]}</span></div>
+      <div class="stat-row"><span class="stat-k">Concurrence directe</span><span class="stat-v">${l.concurrence || '—'} établissements / 200m</span></div>
+      <div class="stat-row"><span class="stat-k">Environnement</span><span class="stat-v" style="text-align:right;max-width:55%;font-size:12px;">${l.en}</span></div>
+    </div>`;
+
+  // Tab 3 — Match
+  const pts = [];
+  if (l.ex && userProfile.extraction) pts.push({t:'Extraction présente — critère clé ✓', g:true});
+  if (!l.ex && userProfile.extraction) pts.push({t:'Extraction absente — point critique', g:false});
+  if (l.te >= 8 && userProfile.terrasse) pts.push({t:`Terrasse ${l.te} places — correspond ✓`, g:true});
+  if (l.lo <= (userProfile.loyerMax||80000)) pts.push({t:'Loyer dans votre budget ✓', g:true});
+  else pts.push({t:`Loyer de ${(l.lo/1000).toFixed(0)}k€ au-dessus de votre cible`, g:false});
+  if (l.st >= (userProfile.surfMin||80) && l.st <= (userProfile.surfMax||160)) pts.push({t:`${l.st} m² — surface idéale ✓`, g:true});
+  if (l.ag) pts.push({t:'Emplacement d\'angle — visibilité forte ✓', g:true});
+  if (l.pr <= (userProfile.budget||600000)) pts.push({t:'Prix dans votre budget ✓', g:true});
+  else pts.push({t:`Prix de ${(l.pr/1000).toFixed(0)}k€ au-dessus de votre budget`, g:false});
+  document.getElementById('det-match').innerHTML = `
+    <div class="det-section">
+      <div style="display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+        <div style="width:70px;height:70px;border-radius:50%;background:${sc>=75?'var(--vert-clair)':sc>=55?'var(--or-clair)':'var(--rouge-clair)'};display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-size:24px;font-weight:500;color:${sc>=75?'var(--vert)':sc>=55?'var(--or)':'var(--rouge)'};">${sc}</div>
+          <div style="font-size:10px;color:var(--gris);">/100</div>
+        </div>
+      </div>
+      ${pts.map(p => `<div class="match-point ${p.g?'mp-green':'mp-amber'}">${p.t}</div>`).join('')}
+    </div>`;
+}
+
 // ===== SWIPE =====
 function scoreCard(l) {
   let s = 50;
@@ -656,22 +1005,20 @@ function scoreCard(l) {
 
 function renderCurrentCard() {
   if (currentCardIdx >= LISTINGS.length) {
-    document.getElementById('scard-main').innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:12px;"><div style="font-family:Playfair Display,serif;font-size:22px;">C\'est tout !</div><div style="font-size:13px;color:var(--gris);">Vous avez vu toutes les annonces disponibles.</div><button class="big-btn btn-gold" style="margin-top:16px;width:200px;" onclick="currentCardIdx=0;renderCurrentCard()">Recommencer</button></div>';
+    document.getElementById('scard-main').innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:12px;"><div style="font-family:Playfair Display,serif;font-size:22px;">C\'est tout !</div><div style="font-size:13px;color:var(--gris);">Vous avez vu toutes les annonces.</div><button class="big-btn btn-gold" style="margin-top:16px;width:200px;" onclick="currentCardIdx=0;renderCurrentCard()">Recommencer</button></div>';
     return;
   }
   const l = LISTINGS[currentCardIdx];
   const sc = scoreCard(l);
-  const cls = sc >= 75 ? 'stag-g' : 'stag-n';
   document.getElementById('swipe-count').textContent = `${LISTINGS.length - currentCardIdx} annonces`;
+  const imgHtml = l.photos?.length
+    ? `<img src="${l.photos[0]}" alt="${l.t}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.innerHTML='<div class=scard-img-bg></div><div class=scard-img-icon><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1\' width=\'56\' height=\'56\'><path d=\'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\'/></svg></div>'">`
+    : `<div class="scard-img-bg"></div><div class="scard-img-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="56" height="56"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>`;
   document.getElementById('scard-main').innerHTML = `
     <div class="swipe-like-overlay" id="like-overlay">GARDER ♥</div>
     <div class="swipe-nope-overlay" id="nope-overlay">PASSER ✕</div>
-    <div class="scard-img">
-      <div class="scard-img-bg"></div>
-      <div class="scard-img-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="56" height="56"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <div class="scard-score-badge">Match <span>${sc}</span>/100</div>
-    </div>
-    <div class="scard-body">
+    <div class="scard-img" style="cursor:pointer;" onclick="openDetail('${l.id}','swipe')">${imgHtml}<div class="scard-score-badge">Match <span>${sc}</span>/100</div></div>
+    <div class="scard-body" style="cursor:pointer;" onclick="openDetail('${l.id}','swipe')">
       <div class="scard-name">${l.t}</div>
       <div class="scard-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Paris ${l.a}e · ${l.q}</div>
       <div class="scard-tags">
@@ -744,47 +1091,19 @@ function setupSwipe() {
   card.addEventListener('touchstart', onStart, {passive:true}); card.addEventListener('touchmove', onMove, {passive:false}); card.addEventListener('touchend', onEnd);
 }
 
-// ===== DETAIL =====
-function renderDetail() {
-  const l = LISTINGS[currentCardIdx] || LISTINGS[0];
-  const sc = scoreCard(l);
-  document.getElementById('det-score-n').textContent = sc;
-  document.getElementById('det-name').textContent = l.t;
-  document.getElementById('det-loc').textContent = `Paris ${l.a}e · ${l.q} · ${l.st} m²`;
-  document.getElementById('det-data').innerHTML = `
-    <div class="det-row"><span class="det-k">Prix de cession</span><span class="det-v">${l.pr.toLocaleString('fr-FR')} €</span></div>
-    <div class="det-row"><span class="det-k">Loyer annuel</span><span class="det-v">${l.lo.toLocaleString('fr-FR')} €</span></div>
-    <div class="det-row"><span class="det-k">Surface totale</span><span class="det-v">${l.st} m²</span></div>
-    <div class="det-row"><span class="det-k">Couverts intérieur</span><span class="det-v">${l.ip > 0 ? l.ip+' places' : '—'}</span></div>
-    <div class="det-row"><span class="det-k">Terrasse</span><span class="det-v">${l.te > 0 ? l.te+' places' : 'Aucune'}</span></div>
-    <div class="det-row"><span class="det-k">Extraction</span><span class="det-v">${l.ex ? '✓ Présente' : '✗ Absente'}</span></div>
-    <div class="det-row"><span class="det-k">Licence IV</span><span class="det-v">${l.l4 ? '✓ Oui' : '✗ Non'}</span></div>
-    <div class="det-row"><span class="det-k">Façade</span><span class="det-v">${l.fa} ml${l.ag?' · Angle':''}</span></div>`;
-  const fluxVal = l.flux === 'Très fort' ? 90 : l.flux === 'Fort midi' ? 70 : l.flux === 'Fort soir' ? 65 : 75;
-  document.getElementById('det-env').innerHTML = `
-    <div class="env-bar"><div class="env-label">Flux piéton estimé</div><div class="env-val det-v-green">${l.flux}</div><div class="env-meter"><div class="env-fill" style="width:${fluxVal}%"></div></div></div>
-    <div class="det-row"><span class="det-k">Profil client dominant</span><span class="det-v">${l.profil || l.en.split(',')[0]}</span></div>
-    <div class="det-row"><span class="det-k">Concurrence directe</span><span class="det-v">${l.concurrence || '—'} établissements/200m</span></div>
-    <div class="det-row"><span class="det-k">Environnement</span><span class="det-v" style="text-align:right;max-width:55%;font-size:12px;">${l.en}</span></div>`;
-  const pts = [];
-  if (l.ex && userProfile.extraction) pts.push({t:'Extraction présente ✓', g:true});
-  if (l.te >= 8 && userProfile.terrasse) pts.push({t:`Terrasse ${l.te} places ✓`, g:true});
-  if (l.ag) pts.push({t:'Emplacement d\'angle ✓', g:true});
-  if (l.lo > (userProfile.loyerMax||80000)) pts.push({t:'Loyer au-dessus de votre cible', g:false});
-  if (!l.ex && userProfile.extraction) pts.push({t:'Extraction absente — point de vigilance', g:false});
-  document.getElementById('det-match').innerHTML = pts.map(p => `<div class="match-point ${p.g?'mp-green':'mp-amber'}">${p.t}</div>`).join('') || '<div class="match-point mp-green">Bonne cohérence avec votre profil</div>';
-}
-
-// ===== CONTACT =====
+// ===== DETAIL (legacy redirect) =====
+function renderDetail() { if (currentDetailListing) renderDetailFull(currentDetailListing); }
+function addFav() { if(currentDetailListing) { favs.push(currentDetailListing); updateFavBadge(); toast('Ajouté aux favoris ♥'); } }
+function addFavById(id) { const l = LISTINGS.find(x=>x.id===id); if(l) { favs.push(l); updateFavBadge(); toast('Ajouté aux favoris ♥'); } }
 function goContact() {
-  const l = LISTINGS[currentCardIdx] || LISTINGS[0];
-  document.getElementById('mail-annonce').textContent = l.t.split(' ').slice(-1)[0];
-  document.getElementById('mail-body').textContent = `Un acheteur qualifié est intéressé par votre annonce "${l.t}". Budget de reprise confirmé. Concept : ${userProfile.concept || 'restauration'}. Coordonnées disponibles sur demande via FondsMatch.`;
+  const l = currentDetailListing || LISTINGS[currentCardIdx] || LISTINGS[0];
+  document.getElementById('mail-annonce').textContent = l.t;
+  document.getElementById('mail-body').textContent = `Un acheteur qualifié est intéressé par votre annonce "${l.t}" (réf. ${l.ref||l.id}). Concept : ${userProfile.concept || 'restauration'}. Budget confirmé. Coordonnées disponibles sur demande via FondsMatch.`;
   goView('contact');
-  toast('Demande envoyée à l\'agence ✓');
+  toast('Demande envoyée ✓');
 }
 
-function addFav() { favs.push(LISTINGS[currentCardIdx]); updateFavBadge(); toast('Ajouté aux favoris ♥'); }
+function addFav() { const l = currentDetailListing || LISTINGS[currentCardIdx]; if(l){favs.push(l);updateFavBadge();toast('Ajouté aux favoris ♥');} }
 function updateFavBadge() {
   const b = document.getElementById('fav-badge'), c = document.getElementById('fav-count');
   if (b) b.style.display = favs.length > 0 ? 'block' : 'none';
