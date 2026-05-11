@@ -426,13 +426,34 @@ const DATA = [
 
 // ===== STATE =====
 let UP = {}, chatStep = 0, CUR_IDX = 0, favs = [], fromView = 'swipe', CUR_L = null, gPhotoIdx = 0, micOn = false, recognition = null;
+let chatHistory = [];
+let apiKey = localStorage.getItem('fm_ak') || '';
+let chatReady = false;
+let loading = false;
 
-const CHAT = [
-  {ai:"Bonjour ! Je suis votre assistant FondsMatch. 👋\n\nQuel type d'établissement souhaitez-vous ouvrir à Paris ?",ph:"Ex : restaurant, bar à vins, coffee shop…"},
-  {ai:"Parfait ! Dans quels arrondissements cherchez-vous ? Et quelle surface souhaitez-vous (en m²) ?",ph:"Ex : Paris 2e, 3e, 9e — entre 100 et 150 m²"},
-  {ai:"Quel est votre budget de reprise et votre loyer maximum annuel ?",ph:"Ex : max 600 000 € de reprise, loyer max 75 000 €/an"},
-  {ai:"Dernière question : quels critères sont indispensables, et qu'est-ce qui est rédhibitoire ?",ph:"Ex : extraction obligatoire, terrasse souhaitée, pas de gros travaux"},
-];
+const SYSTEM_PROMPT = `Tu es Alex, conseiller expert en fonds de commerce CHR (café, hôtel, restaurant) à Paris chez FondsMatch. Tu aides des acheteurs à trouver leur futur commerce.
+
+TON RÔLE : Mener une conversation naturelle, chaleureuse et professionnelle pour comprendre le projet de l'acheteur et construire son profil de recherche.
+
+STYLE : Conversationnel, humain, jamais robotique. UNE seule question à la fois. Rebondis sur ce que dit la personne. Montre que tu comprends le métier CHR. Sois bienveillant et enthousiaste.
+
+PROGRESSION (8-10 échanges naturels) :
+1. Accueil + type d'établissement
+2. Concept précis (ambiance, positionnement, cuisine)
+3. Expérience de l'acheteur (première affaire ou confirmé ?)
+4. Zones géographiques souhaitées à Paris
+5. Surface et configuration (terrasse ? extraction ?)
+6. Budget de reprise et loyer maximum
+7. Critères techniques (licence IV ? travaux acceptés ?)
+8. Timeline et urgence
+9. Résumé chaleureux + transition
+
+À la fin de chaque réponse, inclus ce JSON entre balises (jamais affiché à l'utilisateur) :
+<PROFILE>{"concept":"","experience":"primo","zones":[],"surfMin":0,"surfMax":0,"loyerMax":0,"budget":0,"extraction":false,"terrasse":false,"licence4":false,"fluxMidi":false,"fluxSoir":false,"redhibitoires":"","ready":false}</PROFILE>
+
+Quand le profil est suffisamment riche (au moins zones + budget + surface renseignés), mets ready:true et ajoute ###PROFIL_COMPLET### à la fin de ton message.
+
+RÈGLES : Maximum 3 phrases par réponse. Toujours en français. Adapter selon l'expérience détectée.`;
 
 // ===== NAVIGATION =====
 const VIEWS = ['splash','chat','profil','swipe','list','detail','contact'];
@@ -468,51 +489,166 @@ function switchMode(m) {
 
 // ===== CHAT =====
 function initChat() {
-  chatStep = 0; document.getElementById('cmsgs').innerHTML = '';
-  addAI(CHAT[0].ai); document.getElementById('cinput').placeholder = CHAT[0].ph;
+  chatStep = 0; chatHistory = []; chatReady = false; loading = false;
+  document.getElementById('cmsgs').innerHTML = '';
+  if (!apiKey) { showKeyPrompt(); return; }
+  startConv();
 }
 
-function addAI(txt) {
+function showKeyPrompt() {
+  document.getElementById('cmsgs').innerHTML = `
+    <div class="msg msg-ai"><div class="bubble">Bonjour ! Je suis Alex, votre conseiller FondsMatch. 👋<br><br>Pour une conversation personnalisée avec l'IA, entrez votre clé API Anthropic :</div></div>
+    <div style="padding:10px 4px">
+      <div style="display:flex;gap:8px">
+        <input type="password" id="ak-inp" placeholder="sk-ant-api03-…" style="flex:1;border:1px solid var(--creme2);border-radius:20px;padding:9px 14px;font-size:13px;font-family:inherit;outline:none;color:var(--noir)">
+        <button onclick="saveKey()" style="background:var(--or);color:var(--noir);border:none;border-radius:20px;padding:9px 16px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer">OK</button>
+      </div>
+      <div style="font-size:11px;color:var(--gris);margin-top:7px;padding:0 4px">Stockée localement · console.anthropic.com</div>
+      <button onclick="skipKey()" style="background:none;border:none;color:var(--gris);font-size:12px;font-family:inherit;cursor:pointer;margin-top:6px;padding:0 4px;text-decoration:underline">Continuer en mode démo</button>
+    </div>`;
+}
+
+function saveKey() {
+  const v = document.getElementById('ak-inp')?.value.trim();
+  if (v) { apiKey = v; localStorage.setItem('fm_ak', v); }
+  document.getElementById('cmsgs').innerHTML = '';
+  startConv();
+}
+function skipKey() { document.getElementById('cmsgs').innerHTML = ''; startConv(); }
+
+function startConv() {
+  if (apiKey) {
+    callClaude(null, "Commence la conversation. Accueille chaleureusement l'acheteur et pose ta première question sur son projet d'établissement.");
+  } else {
+    addAImsg("Bonjour ! Je suis Alex, votre conseiller FondsMatch. 👋\n\nQuel type d'établissement souhaitez-vous ouvrir à Paris ? Restaurant, bar, coffee shop, autre chose ?");
+    document.getElementById('cinput').placeholder = "Ex : un restaurant bistronomique…";
+  }
+}
+
+async function callClaude(userMsg, systemUserMsg) {
+  setTyping(true);
+  const msgs = [...chatHistory];
+  const msgToSend = userMsg || systemUserMsg;
+  if (msgToSend) msgs.push({ role: 'user', content: msgToSend });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 500, system: SYSTEM_PROMPT, messages: msgs })
+    });
+    const data = await res.json();
+    setTyping(false);
+    if (data.error) { fallback(userMsg); return; }
+
+    const full = data.content[0].text;
+    const pm = full.match(/<PROFILE>(.*?)<\/PROFILE>/s);
+    if (pm) { try { mergeProfile(JSON.parse(pm[1])); if (JSON.parse(pm[1]).ready) chatReady = true; } catch(e){} }
+
+    const display = full.replace(/<PROFILE>.*?<\/PROFILE>/gs,'').replace('###PROFIL_COMPLET###','').trim();
+    if (userMsg) chatHistory.push({ role: 'user', content: userMsg });
+    chatHistory.push({ role: 'assistant', content: full });
+
+    addAImsg(display);
+    if (chatReady) {
+      setTimeout(() => {
+        addAImsg("J'ai maintenant une excellente vision de votre projet. J'ai trouvé " + DATA.length + " annonces qui méritent votre attention. 🎯");
+        setTimeout(showReadyBtn, 1000);
+      }, 700);
+    }
+  } catch(e) { setTyping(false); fallback(userMsg); }
+}
+
+function mergeProfile(p) {
+  if (p.concept) UP.concept = p.concept;
+  if (p.experience) UP.experience = p.experience;
+  if (p.zones?.length) UP.zones = p.zones;
+  if (p.surfMin > 0) UP.surfMin = p.surfMin;
+  if (p.surfMax > 0) UP.surfMax = p.surfMax;
+  if (p.loyerMax > 0) UP.loyerMax = p.loyerMax;
+  if (p.budget > 0) UP.budget = p.budget;
+  if (p.extraction) UP.extraction = true;
+  if (p.terrasse) UP.terrasse = true;
+  if (p.licence4) UP.licence4 = true;
+  if (p.fluxMidi) UP.fluxMidi = true;
+  if (p.fluxSoir) UP.fluxSoir = true;
+  if (p.redhibitoires) UP.redhibitoires = p.redhibitoires;
+}
+
+function showReadyBtn() {
   const el = document.getElementById('cmsgs');
-  const t = document.createElement('div'); t.className = 'msg msg-ai';
-  t.innerHTML = '<div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
-  el.appendChild(t); el.scrollTop = el.scrollHeight;
-  setTimeout(() => { t.innerHTML = `<div class="bubble">${txt.replace(/\n/g,'<br>')}</div><div class="msg-t">Maintenant</div>`; el.scrollTop = el.scrollHeight; }, 850);
+  const d = document.createElement('div'); d.style.cssText='padding:8px 4px';
+  d.innerHTML=`<button onclick="buildProfile()" style="width:100%;background:var(--or);color:var(--noir);border:none;border-radius:40px;padding:13px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer">Voir mes annonces →</button>`;
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+
+// Fallback sans clé
+const FB = [
+  "Quel type d'établissement souhaitez-vous ouvrir ? Restaurant, bar, coffee shop ?",
+  "Intéressant ! C'est votre première affaire ou avez-vous déjà de l'expérience en restauration ?",
+  "Dans quels arrondissements de Paris vous voyez-vous ?",
+  "Quelle surface vous faut-il environ ? Et une terrasse, c'est important pour vous ?",
+  "Quel est votre budget de reprise et votre loyer mensuel maximum ?",
+  "Extraction obligatoire ? Licence IV utile ? Les travaux, ça vous va ?",
+  "Super ! Et votre timeline, vous cherchez pour quand environ ?",
+];
+let fbStep = 0;
+
+function fallback(userMsg) {
+  if (userMsg) {
+    const t = userMsg.toLowerCase();
+    if (fbStep===0) UP.concept=userMsg;
+    if (fbStep===2) UP.zones=userMsg;
+    if (fbStep===3){const m=userMsg.match(/(\d+)\s*[àa]\s*(\d+)/);if(m){UP.surfMin=+m[1];UP.surfMax=+m[2];}UP.terrasse=t.includes('terrasse');}
+    if (fbStep===4){const n=userMsg.match(/\d[\d\s]{3,}/g);if(n?.[0])UP.budget=+n[0].replace(/\s/g,'');if(n?.[1])UP.loyerMax=+n[1].replace(/\s/g,'')*12;}
+    if (fbStep===5){UP.extraction=t.includes('extraction');UP.licence4=t.includes('licence');}
+    fbStep++;
+  }
+  if (fbStep < FB.length) { addAImsg(FB[fbStep]); }
+  else { addAImsg("Parfait ! J'ai tout ce qu'il me faut pour vous trouver le bon local. 🎯"); setTimeout(buildProfile, 1400); }
+  chatStep = Math.min(fbStep+1, 8); updateProg();
+}
+
+function setTyping(on) {
+  loading = on;
+  document.getElementById('typ-ind')?.remove();
+  if (on) {
+    const el=document.getElementById('cmsgs');
+    const t=document.createElement('div'); t.className='msg msg-ai'; t.id='typ-ind';
+    t.innerHTML='<div class="bubble" style="padding:12px 16px"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';
+    el.appendChild(t); el.scrollTop=el.scrollHeight;
+  }
+}
+
+function addAImsg(txt) {
+  const el=document.getElementById('cmsgs');
+  const m=document.createElement('div'); m.className='msg msg-ai';
+  m.innerHTML=`<div class="bubble">${txt.replace(/\n/g,'<br>')}</div><div class="msg-t">Alex · maintenant</div>`;
+  el.appendChild(m); el.scrollTop=el.scrollHeight;
+  chatStep=Math.min(chatStep+1,8); updateProg();
 }
 
 function addUser(txt) {
-  const el = document.getElementById('cmsgs');
-  const m = document.createElement('div'); m.className = 'msg msg-user';
-  m.innerHTML = `<div class="bubble">${txt}</div><div class="msg-t">Vous</div>`;
-  el.appendChild(m); el.scrollTop = el.scrollHeight;
+  const el=document.getElementById('cmsgs');
+  const m=document.createElement('div'); m.className='msg msg-user';
+  m.innerHTML=`<div class="bubble">${txt}</div><div class="msg-t">Vous</div>`;
+  el.appendChild(m); el.scrollTop=el.scrollHeight;
 }
 
 function send() {
-  const inp = document.getElementById('cinput');
-  const txt = inp.value.trim(); if (!txt) return;
-  addUser(txt); inp.value = ''; inp.style.height = '';
-  parse(txt, chatStep); chatStep++;
-  updateProg();
-  setTimeout(() => {
-    if (chatStep < CHAT.length) { addAI(CHAT[chatStep].ai); document.getElementById('cinput').placeholder = CHAT[chatStep].ph; }
-    else { addAI("Excellent ! Je construis votre profil et recherche les meilleures annonces… 🔍"); setTimeout(buildProfile, 1800); }
-  }, 1000);
+  const inp=document.getElementById('cinput');
+  const txt=inp.value.trim(); if(!txt||loading)return;
+  addUser(txt); inp.value=''; inp.style.height='';
+  if (apiKey) callClaude(txt, null);
+  else setTimeout(()=>fallback(txt),300);
 }
 
-function parse(txt, step) {
-  const t = txt.toLowerCase();
-  if (step === 0) UP.concept = txt;
-  if (step === 1) { UP.zones = txt; const m = txt.match(/(\d+)\s*[àa]\s*(\d+)/); if(m){UP.surfMin=+m[1];UP.surfMax=+m[2];} }
-  if (step === 2) { const bm=txt.match(/(\d[\d\s]{2,})/g); if(bm&&bm.length>=1)UP.budget=+bm[0].replace(/\s/g,''); if(bm&&bm.length>=2)UP.loyerMax=+bm[1].replace(/\s/g,''); }
-  if (step === 3) { UP.extraction=t.includes('extraction'); UP.terrasse=t.includes('terrasse'); UP.redhibitoires=txt; }
-}
-
-function updateProg() { document.querySelectorAll('.cp').forEach((c,i)=>c.classList.toggle('done',i<=chatStep)); }
+function updateProg() { document.querySelectorAll('.cp').forEach((c,i)=>c.classList.toggle('done',i<Math.ceil(chatStep/2))); }
 
 function buildProfile() {
-  if (!UP.surfMin) UP.surfMin=80; if (!UP.surfMax) UP.surfMax=180;
-  if (!UP.loyerMax) UP.loyerMax=80000; if (!UP.budget) UP.budget=600000;
-  document.getElementById('mnb').textContent = DATA.length;
+  if(!UP.surfMin)UP.surfMin=80; if(!UP.surfMax)UP.surfMax=180;
+  if(!UP.loyerMax)UP.loyerMax=80000; if(!UP.budget)UP.budget=600000;
+  document.getElementById('mnb').textContent=DATA.length;
   goView('profil');
 }
 
